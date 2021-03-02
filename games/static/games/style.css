@@ -8,8 +8,18 @@ h3 {
     margin-left: 20px;
 }
 
+.button {
+    margin-left: 20px;
+    background-color: #25fe01 ;
+    
+}
+
 .top {
     display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
 }
 
 .grid {

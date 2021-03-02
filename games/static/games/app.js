@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i <= alienInvaders.length -1; i++) {
             alienInvaders[i] = restartInvaders[i]
         }
-        // alienInvaders.forEach( invader => squares[invader].classList.remove('invader'))
+        squares[currentShooterIndex].classList.remove('shooter')
         clearInterval(invaderId)
         clearInterval(timerId)
         disablePlayer(shoot,moveShooter)
@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         time = 0
         invaderId = 0
         timerId = 0
-        resultDisplay.innerHTML = 0
-        timeDisplay.innerHTML = 0
+        resultDisplay.innerHTML = 00
+        timeDisplay.innerHTML = 00
         draw()
     }
 
@@ -127,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // decide a game over
         if (squares[currentShooterIndex].classList.contains('invader', 'shooter')) {
-            resultDisplay.textContent = 'Game Over'
             squares[currentShooterIndex].classList.add('boom')
             clearInterval(invaderId)
             clearInterval(timerId)
@@ -136,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (let i = 0; i <= alienInvaders.length -1; i++) {
             if (alienInvaders[i] > squares.length - (width-1)) {
-                resultDisplay.textContent = 'Game Over'
                 clearInterval(invaderId)
                 clearInterval(timerId)
                 disablePlayer(shoot, moveShooter)
