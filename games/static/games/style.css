@@ -1,0 +1,50 @@
+body {
+    background-color: black;
+}
+
+h3 {
+    color: #25fe01;
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.top {
+    display: inline-block;
+}
+
+.grid {
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    border: solid 1px;
+    width: 450px;
+    height: 450px;
+    box-sizing: content-box;
+}
+
+.grid div {
+    width: 30px;
+    height: 30px;
+    background-color: black;
+    box-sizing: content-box;
+}
+
+.shooter {
+    background-image: url('images/spaceship.png');
+    background-size: cover;
+}
+
+.invader {
+    background-image: url('images/invader.png');
+    background-size: cover;
+}
+
+.boom {
+    background-image: url('images/boom.png');
+    background-size: cover;
+}
+
+.laser {
+    background-image: url('images/rocket.png');
+    background-size: cover;
+}
