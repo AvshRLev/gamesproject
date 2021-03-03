@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alienInvaders[i] = restartInvaders[i]
         }
         squares[currentShooterIndex].classList.remove('shooter')
+        squares[currentShooterIndex].classList.remove('boom')
         clearInterval(invaderId)
         clearInterval(timerId)
         disablePlayer(shoot,moveShooter)
