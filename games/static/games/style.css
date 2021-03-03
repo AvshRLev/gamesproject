@@ -2,6 +2,19 @@ body {
     background-color: black;
 }
 
+h1, h2, .green {
+    color: #25fe01;
+    text-align: center;
+}
+
+.border-green {
+    border:solid #25fe01;
+}
+
+.center {
+    align-content: center;
+}
+
 h3 {
     color: #25fe01;
     display: inline-block;

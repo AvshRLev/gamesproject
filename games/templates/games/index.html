@@ -2,78 +2,147 @@
 {% load static %}
 
 {% block body %}
-    <!DOCTYPE html>
-    <html lang="en" dir="ltr">
-        <head>
-            <meta charset="UTF-8">
-            <title>Space Invaders</title>
-            <!-- <link rel="stylesheet" href="style.css"></link> -->
-            <!-- <script src="app.js" charset="utf-8"></script>  -->
-        </head>
-        <body>
-            
-            <div class="top">
-                <button class="button" id="start">Start/Pause</button>
-                <h3>Score: <span id="result">00</span> </h3>
-                <h3>Time: <span id="time">00</span></h3>
-                <button class="button" id="restart">Restart</button>
-            </div>
+    
+<h1>Welcome to Avshi's Wacky Game Arena</h1>
+<h2>High Scores:</h2>
+<hr class="border-green">
+<div class="container border-green">
+    <div class="row">
+        <div class="col green">
+            <span class="green">Level 1</span>
+            <table class="table-borderless table-sm green mx-auto">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Points</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+        <div class="col green">
+            <span class="green">Level 2</span>
+            <table class="table-borderless table-sm green mx-auto">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Points</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+        <div class="w-100"><hr class="border-green"></div>
+        <div class="col green">
+            <strong class="green">Level 3:</strong>
+            <table class="table-borderless table-sm green mx-auto">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Points</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+        <div class="col green mx-auto">
+            <strong class="green">Level 4:</strong>
+            <table class="table-borderless table-sm green mx-auto">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Points</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>{{user.name}}</td>
+                    <td>{{score}}</td>
+                    <td>{{time}}</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+    </div>
+  </div>
 
-            <div class="grid">
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-                <div></div><div></div><div></div><div></div><div></div>
-
-            </div>
-
-        </body>
-    </html>
-
-        
 {% endblock %}
 
-{% block script %}
-    <script src="{% static 'games/app.js' %}"></script>
-{% endblock %}

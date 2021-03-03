@@ -10,32 +10,36 @@
         {% endblock %}
     </head>
     <body>
-        <div>
+        <br>
+        {% block body %}
+        {% endblock %}
+        <div class="position-fixed">
             {% if user.is_authenticated %}
                 Signed in as <strong>{{ user.username }}</strong>.
             {% else %}
                 Not signed in.
             {% endif %}
         </div>
-        <ul class="nav">
+        <ul class="nav fixed-bottom">
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">index</a>
+                <a class="nav-link green" href="{% url 'index' %}">index</a>
             </li>
             {% if user.is_authenticated %}
                 <li>
-                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                    <a class="nav-link green" href="{% url 'logout' %}">Log Out</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                    <a class="nav-link green" href="{% url 'login' %}">Log In</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    <a class="nav-link green" href="{% url 'register' %}">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link green" href="{% url 'space_invaders' %}">Space Invaders</a>
                 </li>
             {% endif %}
         </ul>
         <hr>
-        {% block body %}
-        {% endblock %}
     </body>
 </html>

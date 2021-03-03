@@ -13,6 +13,9 @@ from .models import User
 def index(request):
     return render(request, "games/index.html")
 
+def space_invaders(request):
+    return render(request, "games/space_invaders.html")
+
 def login_view(request):
     if request.method == "POST":
 
