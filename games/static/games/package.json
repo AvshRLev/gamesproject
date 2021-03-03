@@ -1,0 +1,21 @@
+{
+  "name": "games",
+  "version": "1.0.0",
+  "description": "space invadors",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "standard",
+    "lint-fix": "standard --fix"
+  },
+  "author": "Avshi",
+  "license": "ISC",
+  "devDependencies": {
+    "standard": "~16.0.3"
+  },
+  "standard": {
+    "ignore": [
+      "dist/"
+    ]
+  }
+}
