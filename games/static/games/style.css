@@ -57,10 +57,16 @@ h3 {
     background-size: cover;
 }
 
+.intruder {
+    background-image: url('images/intruder.png');
+    background-size: cover;
+}
+
 .invader {
     background-image: url('images/invader.png');
     background-size: cover;
 }
+
 
 .boom {
     background-image: url('images/boom.png');
