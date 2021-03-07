@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const squares = document.querySelectorAll('.grid div')
+    const grid = createGrid()
+    const squares = Array.from(grid.querySelectorAll('div'))
     const resultDisplay = document.querySelector('#result')
     const timeDisplay = document.querySelector('#time')
     const startButton = document.querySelector('#start')
@@ -15,6 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerId
 
     disablePlayer()
+
+    function createGrid(){
+        let grid = document.querySelector(".grid")
+        for(let i = 0; i < 220; i++) {
+            let gridElement = document.createElement('div')            
+            grid.appendChild(gridElement)
+        }
+        return grid;
+    }
 
     reStartButton.addEventListener('mousedown', () => {
         restart()
