@@ -8,13 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let width = 15
     let currentShooterIndex
     let currentInvaderIndex
-    let currentIntruderIndex
     let alienInvadersTakenDown
-    let alienIntrudersTakenDown
     let result
     let time
     let direction    
-    let intruderDirection
     let invaderId
     let timerId
     
@@ -26,13 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
         width = 15
         currentShooterIndex = 202
         currentInvaderIndex = 0
-        currentIntruderIndex = 0
         alienInvadersTakenDown = []
-        alienIntrudersTakenDown = []
         result = 0
         time = 0
         direction = 1
-        intruderDirection = 1
         invaderId = 0
         timerId = 0
     }
@@ -63,10 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 timerId = null
             } else {
                 timerId = setInterval(addTime, 1000)
-                invaderId = setInterval(function () {
-                    moveIntruders();
-                    moveInvaders();
-                }, 500)
+                invaderId = setInterval(moveInvaders, 500)
                 document.addEventListener('keyup', shoot )
                 document.addEventListener('keydown', moveShooter)
             }
@@ -74,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function restart() {
         resetAlienPositions('invader', alienInvaders, restartInvaders)
-        resetAlienPositions('intruder', alienIntruders, restartIntruders)
         squares[currentShooterIndex].classList.remove('shooter')
         squares[currentShooterIndex].classList.remove('boom')
         stopGame(invaderId, timerId, shoot, moveShooter)
@@ -107,22 +97,13 @@ document.addEventListener('DOMContentLoaded', () => {
         15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
         30, 31, 32, 33, 34, 35, 36, 37, 38, 39 
     ]
-    const alienIntruders = [
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-    ]
-
-    const restartIntruders = [
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-    ]
 
     function draw() {
-        alienIntruders.forEach(intruder => squares[currentIntruderIndex + intruder].classList.add('intruder'))
         alienInvaders.forEach( invader => squares[currentInvaderIndex + invader].classList.add('invader'))
         squares[currentShooterIndex].classList.add('shooter')
     }
     draw()
 
-    // move the shooter along a line
     function moveShooter(e) {
         squares[currentShooterIndex].classList.remove('shooter')
         switch(e.keyCode) {
@@ -150,20 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
         win()
     }
 
-    function moveIntruders() {
-        const leftEdge = alienIntruders[0] % width === 0
-        const rightEdge = alienIntruders[alienIntruders.length -1] % width === width -1
-        if ((leftEdge && intruderDirection === -1) || (rightEdge && intruderDirection === 1)) {
-            intruderDirection = width
-        } else if (intruderDirection === width) {
-            if (leftEdge) intruderDirection = 1
-            else intruderDirection = -1
-        }
-        moveAliens(alienIntruders,intruderDirection, 'intruder', alienIntrudersTakenDown)
-        lose()    
-        win()
-    }
-
     function moveAliens(alienArray, alienDirection, alienClassName, aliensTakenDown) {
         for (let i = 0; i <= alienArray.length -1; i++) {
             squares[alienArray[i]].classList.remove(alienClassName)
@@ -179,16 +146,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function lose() {
-        if (squares[currentShooterIndex].classList.contains('invader', 'shooter') 
-        || squares[currentShooterIndex].classList.contains('intruder', 'shooter')) {
+        if (squares[currentShooterIndex].classList.contains('invader', 'shooter') ) {
             squares[currentShooterIndex].classList.add('boom')
             stopGame(invaderId, timerId, shoot, moveShooter)
             console.log('you lost because invaders touched you')
         }
 
         for (let i = squares.length -1; i >= squares.length - width ; i--) {
-            if (squares[i].classList.contains('invader', 'ground') 
-            || squares[i].classList.contains('intruder', 'ground')) {
+            if (squares[i].classList.contains('invader', 'ground')) {
                 stopGame(invaderId, timerId, shoot, moveShooter)
                 console.log(`you lost because invaders reached the ground`)
             }
@@ -196,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function win() {
-        if (alienInvadersTakenDown.length + alienIntrudersTakenDown.length === (alienInvaders.length + alienIntruders.length)) {
+        if (alienInvadersTakenDown.length === alienInvaders.length) {
             stopGame(invaderId, timerId, shoot, moveShooter)
             console.log('you win')
         }
@@ -211,10 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
             squares[currentLaserIndex].classList.add('laser')
             if (squares[currentLaserIndex].classList.contains('invader')) {
                 removeLaserAndRemoveAlien('invader',alienInvaders, alienInvadersTakenDown)
-                result++
-                resultDisplay.textContent = result
-            } else if (squares[currentLaserIndex].classList.contains('intruder')) {
-                removeLaserAndRemoveAlien('intruder',alienIntruders, alienIntrudersTakenDown)
                 result++
                 resultDisplay.textContent = result
             }
@@ -239,8 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 laserId = setInterval(moveLaser, 100)
                 break
         }
-    }
-    
+    }    
 })
 
 function stopGame(invaderId, timerId, shoot, moveShooter) {
@@ -253,50 +213,4 @@ function disablePlayer(shoot, moveShooter) {
     document.removeEventListener('keyup', shoot)
     document.removeEventListener('keydown', moveShooter)
 }
-
-//function moveAliens(alienArray, alienClassName, alienDirection, aliensTakenDown) {          
-    //     const leftEdge = squares[alienArray[0]].classList.contains('leftSide')
-    //     const rightEdge = squares[alienArray[alienArray.length -1]].classList.contains('rightSide')
-    //     if ((leftEdge && alienDirection === -1) || (rightEdge && alienDirection === 1)) {    
-    //         console.log(`before width is ${intruderDirection}`) 
-    //         console.log(squares[alienArray[0]].classList)  
-    //         console.log(alienArray[alienArray.length -1]) 
-    //         changeDirection(width, alienClassName)
-    //         console.log(`after width is ${intruderDirection}`)  
-    //     } else if (alienDirection === width) {
-    //         if (leftEdge) changeDirection(1, alienClassName)                  
-    //         else if (rightEdge) changeDirection(-1, alienClassName)                 
-    //     }        
-    //     for (let i = 0; i <= alienArray.length - 1; i++) {
-    //         squares[alienArray[i]].classList.remove(alienClassName)
-    //     }
-    //     for (let i = 0; i <= alienArray.length - 1; i++) {
-    //         alienArray[i] += alienDirection
-    //     }
-    //     for (let i = 0; i <= alienArray.length - 1; i++) {
-    //         if (!aliensTakenDown.includes(i)) {
-    //             squares[alienArray[i]].classList.add(alienClassName)
-    //         }
-    //     }
-
-        
-    //     // console.log()
-    //     // console.log(alienDirection)
-    //     // console.log(rightEdge)    
-    //     lose()    
-    //     win()  
-    // }
-    // function changeDirection(direction, alienClassName) {
-    //     if(alienClassName === 'intruder') {
-    //         intruderDirection = direction
-    //     }
-    //     clearInterval(invaderId)
-    //     invaderId = setInterval(function () {
-    //         moveAliens(alienIntruders, 'intruder' ,intruderDirection , alienIntrudersTakenDown);
-    //         console.log(intruderDirection)
-    //         moveInvaders();
-    //     }, 500)
-        
-    // }    
-
 
