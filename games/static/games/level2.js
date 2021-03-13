@@ -1,3 +1,82 @@
+class Alien{
+    constructor(name, imageCssClass, health, indexOnBoard, lineWidth ) {
+        this.name = name
+        this.imageCssClass = imageCssClass
+        this.health = health
+        this.colorByHealthLevel = {
+            1: 'green',
+            2: 'blue'
+        }
+        this.indexOnBoard = indexOnBoard 
+        this.lineWidth = lineWidth
+    }
+    _move(direction) {
+        this.indexOnBoard = indexOnBoard + direction
+    }
+    moveLeft() {
+        this._move(-1)
+    } 
+    moveRight() {
+        this._move(1)
+    } 
+    moveDown() {
+        this._move(this.lineWidth)
+    }
+    isDead() {
+        return this.health === 0
+    }
+    draw(square) {
+        if(this.isDead()) {
+            square.class = 'empty'
+        } else {
+            square.classList.add(this.imageCssClass)
+        }
+    }
+}
+
+function createInvader(indexOnBoard, lineWidth) {
+    let alien =  new Alien('invader', 'invader', 1, indexOnBoard, lineWidth)
+    return alien
+}
+
+function createIntruder(indexOnBoard, lineWidth) {
+    return new Alien('intruder', 'intruder', 2, indexOnBoard, lineWidth)
+}
+
+class Board{
+    constructor(parent, width) {
+        this.parent = parent
+        this.width = width
+        this.aliens = []
+        this.squares = []
+        const alienInvaders = [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+        30, 31, 32, 33, 34, 35, 36, 37, 38, 39 
+        ]
+    
+    
+        for(let i = 0; i < width*width; i++) {
+            let square = document.createElement('div') 
+            this.squares.push(square)           
+            this.parent.appendChild(square)
+            if (alienInvaders.includes(i)) {
+                let invader = createInvader(alienInvaders[i], width)
+                invader.draw(square)
+                this.aliens.push(invader)
+            } else if (i > width*width-width) {
+                square.classList.add('ground')
+            }
+
+        }
+
+    }
+}
+
+
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const grid = createGrid()
     const squares = Array.from(grid.querySelectorAll('div'))
@@ -39,10 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function createGrid(){
         let grid = document.querySelector(".grid")
-        for(let i = 0; i < 225; i++) {
-            let gridElement = document.createElement('div')            
-            grid.appendChild(gridElement)
-        }
+        let board = new Board(grid, 15)
         return grid;
     }
 
@@ -97,9 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const alienInvaders = [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        30, 31, 32, 33, 34, 35, 36, 37, 38, 39 
+        // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        // 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+        // 30, 31, 32, 33, 34, 35, 36, 37, 38, 39 
     ]
 
     const restartInvaders = [
@@ -108,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         30, 31, 32, 33, 34, 35, 36, 37, 38, 39 
     ]
     const alienIntruders = [
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+        // 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
     ]
 
     const restartIntruders = [
@@ -116,8 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
 
     function draw() {
-        alienIntruders.forEach(intruder => squares[currentIntruderIndex + intruder].classList.add('intruder'))
-        alienInvaders.forEach( invader => squares[currentInvaderIndex + invader].classList.add('invader'))
+        // alienIntruders.forEach(intruder => squares[currentIntruderIndex + intruder].classList.add('intruder'))
+        // alienInvaders.forEach( invader => squares[currentInvaderIndex + invader].classList.add('invader'))
         squares[currentShooterIndex].classList.add('shooter')
     }
     draw()
@@ -147,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         moveAliens(alienInvaders,direction, 'invader', alienInvadersTakenDown)
         lose()    
-        win()
+        // win()
     }
 
     function moveIntruders() {
@@ -161,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         moveAliens(alienIntruders,intruderDirection, 'intruder', alienIntrudersTakenDown)
         lose()    
-        win()
+        // win()
     }
 
     function moveAliens(alienArray, alienDirection, alienClassName, aliensTakenDown) {

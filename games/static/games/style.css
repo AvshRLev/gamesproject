@@ -52,6 +52,13 @@ h3 {
     box-sizing: content-box;
 }
 
+.empty-square {
+    width: 30px;
+    height: 30px;
+    background-color: black;
+    box-sizing: content-box;
+}
+
 .shooter {
     background-image: url('images/spaceship.png');
     background-size: cover;
