@@ -1,3 +1,11 @@
+class Defender{
+    constructor() {
+
+    }
+}
+
+
+
 class Alien{
     constructor(name, imageCssClass, health, indexOnBoard, lineWidth ) {
         this.name = name
@@ -53,9 +61,7 @@ class Board{
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
         15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
         30, 31, 32, 33, 34, 35, 36, 37, 38, 39 
-        ]
-    
-    
+        ]    
         for(let i = 0; i < width*width; i++) {
             let square = document.createElement('div') 
             this.squares.push(square)           
@@ -67,9 +73,14 @@ class Board{
             } else if (i > width*width-width) {
                 square.classList.add('ground')
             }
-
         }
-
+    }
+    move() {
+        for(let i = 0; i < this.aliens.length; i++) {
+            this.aliens.forEach(invader => {
+                invader.moveRight()
+            })
+        }
     }
 }
 
@@ -99,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     disablePlayer()
     setInitialValues()
-    addGround()
+    // addGround()
 
     function setInitialValues() {
         width = 15
@@ -119,9 +130,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function createGrid(){
         let grid = document.querySelector(".grid")
         let board = new Board(grid, 15)
-        return grid;
+        return (grid);
     }
-
+    
     function addGround() {
         for (let i = squares.length - 1; i >= squares.length - width; i--) {
             squares[i].classList.add('ground')
