@@ -64,6 +64,11 @@ h3 {
     background-size: cover;
 }
 
+.defender {
+    background-image: url('images/spaceship.png');
+    background-size: cover;
+}
+
 .invader {
     background-image: url('images/invader.png');
     background-size: cover;
@@ -81,6 +86,11 @@ h3 {
 }
 
 .laser {
+    background-image: url('images/rocket.png');
+    background-size: cover;
+}
+
+.rocket {
     background-image: url('images/rocket.png');
     background-size: cover;
 }

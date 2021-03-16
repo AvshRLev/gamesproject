@@ -5,14 +5,10 @@ class Square{
     }
     setCharacter(character) {
         this.character = character
-        this.div.class = character.getCssClass
+        let cssClass = character.getCssClass()
+        this.div.classList.add(cssClass)
     }
     isTaken() {}    
-}
-
-function createSquare(indexOnBoard, imageCssClass) {
-    let square = new Square(indexOnBoard, imageCssClass)
-    return square
 }
 
 class Defender{
@@ -20,6 +16,21 @@ class Defender{
         this.imageCssClass = imageCssClass
         this.indexOnBoard = indexOnBoard
         this.lineWidth = lineWidth
+    }
+    getCssClass() {
+        let cssClass = this.imageCssClass
+        return cssClass
+    }
+}
+
+class Rocket{
+    constructor(imageCssClass, indexOnBoard) {
+        this.imageCssClass = imageCssClass
+        this.indexOnBoard = indexOnBoard
+    }
+    getCssClass() {
+        let cssClass = this.imageCssClass
+        return cssClass
     }
 }
 
@@ -35,27 +46,9 @@ class Alien{
         this.indexOnBoard = indexOnBoard 
         this.lineWidth = lineWidth
     }
-    _move(direction) {
-        this.indexOnBoard = indexOnBoard + direction
-    }
-    moveLeft() {
-        this._move(-1)
-    } 
-    moveRight() {
-        this._move(1)
-    } 
-    moveDown() {
-        this._move(this.lineWidth)
-    }
-    isDead() {
-        return this.health === 0
-    }
-    draw(square) {
-        if(this.isDead()) {
-            square.class = 'empty'
-        } else {
-            square.classList.add(this.imageCssClass)
-        }
+    getCssClass() {
+        let cssClass = this.imageCssClass
+        return cssClass
     }
 }
 
@@ -95,3 +88,12 @@ class Board{
     }
     
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    grid = document.querySelector('.grid')
+    square = new Square(0, grid)
+    rocket = new Rocket('rocket', 0)
+    invader = createInvader(0, 1)
+    defender = new Defender('defender', 5)
+    square.setCharacter(defender)
+})
