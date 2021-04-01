@@ -70,12 +70,6 @@ class Square {
         this.setEmpty()
         return c
     }
-    // putCharacterDown() {
-    //     let c = this.character
-    //     console.log(c)
-    //     c.getCssClass()
-    // }
-
 }
 
 class Defender {
@@ -143,6 +137,7 @@ class Board {
         this.setup = setup
         this.alienLocations = setup.getAlienLocations()
         this.direction = 1
+        this.defenderLocation = this.defenderStartPosition()
 
     }
     createChildSquareAddToSquares(index) {
@@ -161,7 +156,7 @@ class Board {
     bottomRow() {
         return (this.width * this.width - this.width)
     }
-    defenderLocation() {
+    defenderStartPosition() {
         return this.width * this.width - (this.width + Math.floor(this.width / 2) + 1)
     }
 
@@ -178,14 +173,13 @@ class Board {
             }
         }
         let defender = new Defender('defender', this.width)
-        this.squares[this.defenderLocation()].setCharacter(defender)
+        this.squares[this.defenderLocation].setCharacter(defender)
     }
 
     
-    move() {
+    moveAliens() {
         const aliensAtLeftBorder = this.squares[this.alienLocations[0]].isLeftBorder()
         const aliensAtRightBorder = this.squares[this.alienLocations[this.alienLocations.length - 1]].isRightBorder()
-        console.log(aliensAtRightBorder)
         if ((aliensAtLeftBorder && this.direction === -1) || (aliensAtRightBorder && this.direction === 1)) {
             this.direction = this.width
         } else if (this.direction === this.width) {
@@ -198,7 +192,6 @@ class Board {
                 this.aliens.push(c)
             }
         }
-        // console.log(this.aliens)
         for (let i = 0; i < this.alienLocations.length; i++) {
             this.alienLocations[i] = this.alienLocations[i] + this.direction
             
@@ -210,28 +203,47 @@ class Board {
             }
         }
     }
+
+    moveDefender(direction){
+        console.log(this.squares[this.defenderLocation])
+        let defenderAtLeftBorder = this.squares[this.defenderLocation].isLeftBorder()
+        let defenderAtRightBorder = this.squares[this.defenderLocation].isRightBorder()
+        let defender = this.squares[this.defenderLocation].pickCharacterUp()
+        if (direction === 'left') {
+            console.log(defenderAtLeftBorder)
+            if (defenderAtLeftBorder) this.defenderLocation = this.defenderLocation
+            else this.defenderLocation -= 1            
+        } else if (direction === 'right') {
+            if (defenderAtRightBorder) this.defenderLocation
+            else this.defenderLocation += 1
+        }
+        
+        this.squares[this.defenderLocation].setCharacter(defender)
+    }
 }
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // testDiv = document.querySelector('.test')
-    // square = new Square(0, testDiv)
-    // rocket = new Rocket('rocket', 0)
-    // invader = createInvader(0, 1)
-    // defender = new Defender('defender', 5)
-    // square.setCharacter(defender)
     let grid = document.querySelector('.grid')
     let alienInvaders = [
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
         15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+        30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
     ]
     setup = new Setup(alienInvaders, [], [])
     board = new Board(grid, 15, setup)
     board.draw(setup)
+    console.log(board.defenderLocation)
     const startButton = document.querySelector('#start')
     startButton.addEventListener('mousedown', () => {
-        board.move()
+        board.moveAliens()
     })
+    document.addEventListener('keydown', (e) => {
+        if(e.keyCode === 37) {
+            board.moveDefender('left')
+        } else if (e.keyCode === 39) {
+            board.moveDefender('right')
+        }
+    } )
 
 })
