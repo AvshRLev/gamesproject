@@ -99,33 +99,29 @@ class Rocket {
 }
 
 class Alien {
-    constructor(name, imageCssClass, health, square, lineWidth) {
+    constructor(name, health, square, lineWidth) {
         this.name = name
-        this.imageCssClass = imageCssClass
+        this.imageCssClass = ['dead' , 'invader', 'intruder']
         this.health = health
-        this.colorByHealthLevel = {
-            1: 'green',
-            2: 'blue'
-        }
         this.square = square
         this.lineWidth = lineWidth
         this.type = 'alien'
     }
     getCssClass() {
-        return this.imageCssClass
+        return this.imageCssClass[this.health]
     }
     moveTo(square) {
         square.setCharacter(this)
     }
 }
 
-function createInvader(indexOnBoard, lineWidth) {
-    let alien = new Alien('invader', 'invader', 1, indexOnBoard, lineWidth)
+function createInvader(health ,indexOnBoard, lineWidth) {
+    let alien = new Alien('invader',health , indexOnBoard, lineWidth)
     return alien
 }
 
 function createIntruder(indexOnBoard, lineWidth) {
-    return new Alien('intruder', 'intruder', 2, indexOnBoard, lineWidth)
+    return new Alien('intruder', 2, indexOnBoard, lineWidth)
 }
 
 class Board {
@@ -135,7 +131,9 @@ class Board {
         this.aliens = []
         this.squares = []
         this.setup = setup
-        this.alienLocations = setup.getAlienLocations()
+        this.setupObject = setup.getAlienLocations()
+        this.alienLocations = Object.keys(this.setupObject).map(Number)
+        this.alienHealthLevels = Object.values(this.setupObject)
         this.direction = 1
         this.defenderLocation = this.defenderStartPosition()
 
@@ -160,13 +158,15 @@ class Board {
         return this.width * this.width - (this.width + Math.floor(this.width / 2) + 1)
     }
 
+    // console.log(`${i}:${this.alienHealthLevels[i]}: {this.alienLocations}`)
     draw() {
+        console.log(this.alienHealthLevels)
         for (let i = 0; i < this.width * this.width; i++) {
             this.createChildSquareAddToSquares(i)
             if (this.alienLocations.includes(i)) {
-                let invader = createInvader(this.squares[i].index, this.width)
+                let health = this.alienHealthLevels.shift()
+                let invader = createInvader(health, this.squares[i].index, this.width)
                 this.squares[i].setCharacter(invader)
-                // this.aliens.push(invader)
             }
             if (i >= this.bottomRow()) {
                 this.squares[i].setGround()
@@ -198,19 +198,17 @@ class Board {
         }
         for (let i = 0; i < this.squares.length - 1; i++) {
             if (this.alienLocations.includes(i)) {
-                let c = this.aliens.pop()          
+                let c = this.aliens.shift()          
                 this.squares[i].setCharacter(c)
             }
         }
     }
 
     moveDefender(direction){
-        console.log(this.squares[this.defenderLocation])
-        let defenderAtLeftBorder = this.squares[this.defenderLocation].isLeftBorder()
-        let defenderAtRightBorder = this.squares[this.defenderLocation].isRightBorder()
+        const defenderAtLeftBorder = this.squares[this.defenderLocation].isLeftBorder()
+        const defenderAtRightBorder = this.squares[this.defenderLocation].isRightBorder()
         let defender = this.squares[this.defenderLocation].pickCharacterUp()
         if (direction === 'left') {
-            console.log(defenderAtLeftBorder)
             if (defenderAtLeftBorder) this.defenderLocation = this.defenderLocation
             else this.defenderLocation -= 1            
         } else if (direction === 'right') {
@@ -225,15 +223,14 @@ class Board {
 
 document.addEventListener('DOMContentLoaded', () => {
     let grid = document.querySelector('.grid')
-    let alienInvaders = [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-        30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-    ]
+    let alienInvaders = {
+        0:1, 1:1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1,
+        15:2, 16:2, 17:2, 18:2, 19:2, 20:2, 21:2, 22:2, 23:2, 24:2,
+        30:1, 31:1, 32:0, 33:1, 34:1, 35:1, 36:1, 37:1, 38:1, 39:1,
+    }
     setup = new Setup(alienInvaders, [], [])
     board = new Board(grid, 15, setup)
     board.draw(setup)
-    console.log(board.defenderLocation)
     const startButton = document.querySelector('#start')
     startButton.addEventListener('mousedown', () => {
         board.moveAliens()
