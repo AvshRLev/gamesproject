@@ -30,20 +30,21 @@ class Square {
         this.borders = borders
     }
     isLeftBorder() {
-        return this.borders.contains('left')
+        return this.borders.includes('left')
     }
 
     isRightBorder() {
-        return this.borders.contains('right')
+        return this.borders.includes('right')
     }
 
     isGround() {
-        return this.borders.contains('ground')
+        return this.borders.includes('ground')
     }
 
     setCharacter(character) {
         this.character = character
         let cssClass = character.getCssClass()
+        this.character.square = this.index
         this.div.classList.clear
         this.div.classList.add(cssClass)
     }
@@ -56,7 +57,7 @@ class Square {
         this.div.classList.add('ground')
     }
     hasAlien() {
-        return (this.div.classList.contains('invader') || this.div.classList.contains('intruder'))
+        return (this.character != null && this.character.type === 'alien')
     }
     hasDefender() {
         return (this.classList.contains('defender'))
@@ -69,6 +70,11 @@ class Square {
         this.setEmpty()
         return c
     }
+    // putCharacterDown() {
+    //     let c = this.character
+    //     console.log(c)
+    //     c.getCssClass()
+    // }
 
 }
 
@@ -99,7 +105,7 @@ class Rocket {
 }
 
 class Alien {
-    constructor(name, imageCssClass, health, indexOnBoard, lineWidth) {
+    constructor(name, imageCssClass, health, square, lineWidth) {
         this.name = name
         this.imageCssClass = imageCssClass
         this.health = health
@@ -107,8 +113,9 @@ class Alien {
             1: 'green',
             2: 'blue'
         }
-        this.indexOnBoard = indexOnBoard
+        this.square = square
         this.lineWidth = lineWidth
+        this.type = 'alien'
     }
     getCssClass() {
         return this.imageCssClass
@@ -162,9 +169,9 @@ class Board {
         for (let i = 0; i < this.width * this.width; i++) {
             this.createChildSquareAddToSquares(i)
             if (this.alienLocations.includes(i)) {
-                let invader = createInvader(this.alienLocations[i], this.width)
+                let invader = createInvader(this.squares[i].index, this.width)
                 this.squares[i].setCharacter(invader)
-                this.aliens.push(invader)
+                // this.aliens.push(invader)
             }
             if (i >= this.bottomRow()) {
                 this.squares[i].setGround()
@@ -174,70 +181,35 @@ class Board {
         this.squares[this.defenderLocation()].setCharacter(defender)
     }
 
-    // _movement(direction) {    
-    //     for (let i = 0; i < this.squares.length - 1; i++) {
-    //         this.alienLocations[i] = this.alienLocations[i] + direction
-    //         let nextSquare = this.squares[i + direction]
-    //         if (this.alienLocations.includes(i)) {                
-    //             let invader = createInvader(this.alienLocations[i], this.width)
-    //             nextSquare.setCharacter(invader)            
-    //         }
-    //     }
-    // }
-    // moveRight() {
-    //     this._movement(this.direction)
-    // }
-    // moveLeft() {
-    //     this._movement(this.direction)
-    // }
-    // moveDown() {
-    //     this._movement(this.direction)
-    // }
-    determineDirection() {           
-        // if (this.squares[this.alienLocations[0]].borders.includes('left') && this.direction === -1
-        // || this.squares[this.alienLocations[this.alienLocations.length-1]].borders.includes('right') && this.direction === 1 ) {
-        //     this.direction = this.width
-        // } else if (this.direction === this.width) {
-        //     if (this.squares[this.alienLocations[0]].borders.includes('left')) this.direction = 1
-        //     else this.direction = -1 
-        // }        
-        for (let i = 0; i < this.squares.length - 1; i++) {
-            if (this.squares[i].isRightBorder && this.squares[i].hasAlien && this.direction === 1
-                || this.squares[i].isLeftBorder && this.squares[i].hasAlien && this.direction === -1) {
-                    console.log(this.direction)
-                    this.direction = this.width
-                    console.log(this.direction)
-            } else if (this.direction === this.width) {
-                if (this.squares[i].isRightBorder && this.squares[i].hasAlien) this.direction = 1
-                else this.direction = -1
-            }
-        }
-    }
-    move() {
-        for (let i = 0; i < this.squares.length - 1; i++) {
-            let square = this.squares[i]
-            if (this.alienLocations.includes(i)) {
-                square.pickCharacterUp() 
-            }
-        }
-        this.determineDirection()
-        for (let i = 0; i < this.squares.length - 1; i++) {
-        this.alienLocations[i] = this.alienLocations[i] + this.direction
-        let nextSquare = this.squares[i + this.direction]
-        if (this.alienLocations.includes(i)) {                
-            let invader = createInvader(this.alienLocations[i], this.width)
-            nextSquare.setCharacter(invader)            
-        }
-    }
-        // this.determineDirection()    
-        
-        // this.moveDown()
-            
-        
-    }
-
-        
     
+    move() {
+        const aliensAtLeftBorder = this.squares[this.alienLocations[0]].isLeftBorder()
+        const aliensAtRightBorder = this.squares[this.alienLocations[this.alienLocations.length - 1]].isRightBorder()
+        console.log(aliensAtRightBorder)
+        if ((aliensAtLeftBorder && this.direction === -1) || (aliensAtRightBorder && this.direction === 1)) {
+            this.direction = this.width
+        } else if (this.direction === this.width) {
+            if (aliensAtLeftBorder) this.direction = 1
+            else this.direction = -1
+        }
+        for (let i = 0; i < this.squares.length - 1; i++) {
+            if(this.squares[i].hasAlien()) {
+                let c = this.squares[i].pickCharacterUp()
+                this.aliens.push(c)
+            }
+        }
+        // console.log(this.aliens)
+        for (let i = 0; i < this.alienLocations.length; i++) {
+            this.alienLocations[i] = this.alienLocations[i] + this.direction
+            
+        }
+        for (let i = 0; i < this.squares.length - 1; i++) {
+            if (this.alienLocations.includes(i)) {
+                let c = this.aliens.pop()          
+                this.squares[i].setCharacter(c)
+            }
+        }
+    }
 }
 
 
