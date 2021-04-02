@@ -113,6 +113,9 @@ class Alien {
     moveTo(square) {
         square.setCharacter(this)
     }
+    isDead() {
+        return this.health === 0
+    }
 }
 
 function createInvader(health ,indexOnBoard, lineWidth) {
@@ -158,7 +161,6 @@ class Board {
         return this.width * this.width - (this.width + Math.floor(this.width / 2) + 1)
     }
 
-    // console.log(`${i}:${this.alienHealthLevels[i]}: {this.alienLocations}`)
     draw() {
         console.log(this.alienHealthLevels)
         for (let i = 0; i < this.width * this.width; i++) {
@@ -178,14 +180,7 @@ class Board {
 
     
     moveAliens() {
-        const aliensAtLeftBorder = this.squares[this.alienLocations[0]].isLeftBorder()
-        const aliensAtRightBorder = this.squares[this.alienLocations[this.alienLocations.length - 1]].isRightBorder()
-        if ((aliensAtLeftBorder && this.direction === -1) || (aliensAtRightBorder && this.direction === 1)) {
-            this.direction = this.width
-        } else if (this.direction === this.width) {
-            if (aliensAtLeftBorder) this.direction = 1
-            else this.direction = -1
-        }
+        this.determineDirection()
         for (let i = 0; i < this.squares.length - 1; i++) {
             if(this.squares[i].hasAlien()) {
                 let c = this.squares[i].pickCharacterUp()
@@ -204,18 +199,32 @@ class Board {
         }
     }
 
+    determineDirection() {
+        const aliensAtLeftBorder = this.squares[this.alienLocations[0]].isLeftBorder()
+        const aliensAtRightBorder = this.squares[this.alienLocations[this.alienLocations.length - 1]].isRightBorder()
+        const Left = -1
+        const Right = 1
+        if ((aliensAtLeftBorder && this.direction === Left) || (aliensAtRightBorder && this.direction === Right)) {
+            this.direction = this.width
+        } else if (this.direction === this.width) {
+            if (aliensAtLeftBorder) this.direction = Right
+            else this.direction = Left
+        }
+    }
+
     moveDefender(direction){
         const defenderAtLeftBorder = this.squares[this.defenderLocation].isLeftBorder()
         const defenderAtRightBorder = this.squares[this.defenderLocation].isRightBorder()
+        const moveLeft = this.defenderLocation - 1
+        const moveRight = this.defenderLocation + 1
         let defender = this.squares[this.defenderLocation].pickCharacterUp()
         if (direction === 'left') {
-            if (defenderAtLeftBorder) this.defenderLocation = this.defenderLocation
-            else this.defenderLocation -= 1            
+            if (defenderAtLeftBorder) this.defenderLocation
+            else this.defenderLocation = moveLeft            
         } else if (direction === 'right') {
             if (defenderAtRightBorder) this.defenderLocation
-            else this.defenderLocation += 1
-        }
-        
+            else this.defenderLocation = moveRight
+        }        
         this.squares[this.defenderLocation].setCharacter(defender)
     }
 }
@@ -226,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let alienInvaders = {
         0:1, 1:1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1,
         15:2, 16:2, 17:2, 18:2, 19:2, 20:2, 21:2, 22:2, 23:2, 24:2,
-        30:1, 31:1, 32:0, 33:1, 34:1, 35:1, 36:1, 37:1, 38:1, 39:1,
+        30:1, 31:1, 32:1, 33:1, 34:1, 35:1, 36:1, 37:1, 38:1, 39:1,
     }
     setup = new Setup(alienInvaders, [], [])
     board = new Board(grid, 15, setup)
