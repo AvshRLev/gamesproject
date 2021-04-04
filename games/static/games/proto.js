@@ -2,6 +2,17 @@ class Game {
     constructor() {
 
     }
+    controls() {
+        document.addEventListener('keydown', (e) => {
+            if(e.keyCode === 37) {
+                board.moveDefender('left')
+            } else if (e.keyCode === 39) {
+                board.moveDefender('right')
+            } else if (e.keyCode === 32) {
+                board.shootRocket()
+            }
+        })
+    }
 
 }
 
@@ -39,6 +50,10 @@ class Square {
 
     isGround() {
         return this.borders.includes('ground')
+    }
+
+    isTop() {
+        return this.index <= this.lineWidth
     }
 
     setCharacter(character) {
@@ -86,12 +101,16 @@ class Defender {
 }
 
 class Rocket {
-    constructor(imageCssClass, indexOnBoard) {
+    constructor(imageCssClass, indexOnBoard, boardWidth) {
         this.imageCssClass = imageCssClass
         this.indexOnBoard = indexOnBoard
+        this.boardWidth = boardWidth
     }
     getCssClass() {
         return this.imageCssClass
+    }
+    moveUp() {
+
     }
     moveTo(square) {
         square.setCharacter(this)
@@ -162,7 +181,6 @@ class Board {
     }
 
     draw() {
-        console.log(this.alienHealthLevels)
         for (let i = 0; i < this.width * this.width; i++) {
             this.createChildSquareAddToSquares(i)
             if (this.alienLocations.includes(i)) {
@@ -227,6 +245,48 @@ class Board {
         }        
         this.squares[this.defenderLocation].setCharacter(defender)
     }
+
+    shootRocket() {
+        let rocketId
+        clearInterval(rocketId)
+        const squareAboveDefender = this.squares[this.defenderLocation-this.width]
+        let rocket = new Rocket('rocket', squareAboveDefender, this.width)
+        squareAboveDefender.setCharacter(rocket)
+        rocketId = setInterval(() => {
+            this.moveRocket(rocket, rocketId)
+            
+        }, 100);
+        
+    }
+    moveRocket(rocket, rocketId) {
+        clearInterval(rocketId)
+        let rocketLocation = rocket.indexOnBoard.index 
+        let til = this.squares[rocketLocation].pickCharacterUp()
+        rocket.indexOnBoard.index -= this.width
+        let nextSquare = this.squares[rocket.indexOnBoard.index]
+        if (nextSquare.hasAlien()) {
+            if(nextSquare.character.isDead()) {
+                nextSquare.setCharacter(til)
+            } else {
+                nextSquare.character.health -= 1              
+                let alienHit = nextSquare.pickCharacterUp()
+                console.log(alienHit)
+                nextSquare.setCharacter(alienHit)
+                clearInterval(rocketId) 
+            }            
+        } else if(nextSquare.isTop()) {
+            console.log(nextSquare.isTop())
+            clearInterval(rocketId) 
+        } else {
+            nextSquare.setCharacter(til)
+        }         
+        // if(nextSquare.isTop()) {
+        //     nextSquare.setCharacter(til)
+        //     nextSquare.pickCharacterUp(til)
+        //     clearInterval(rocketId)
+
+        // } else {nextSquare.setCharacter(til)}
+    } 
 }
 
 
@@ -234,8 +294,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let grid = document.querySelector('.grid')
     let alienInvaders = {
         0:1, 1:1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1,
-        15:2, 16:2, 17:2, 18:2, 19:2, 20:2, 21:2, 22:2, 23:2, 24:2,
-        30:1, 31:1, 32:1, 33:1, 34:1, 35:1, 36:1, 37:1, 38:1, 39:1,
+        15:1, 16:2, 17:2, 18:2, 19:2, 20:2, 21:2, 22:2, 23:2, 24:2,
+        30:1, 31:1, 32:1, 33:2, 34:1, 35:1, 36:1, 37:1, 38:1, 39:1,
     }
     setup = new Setup(alienInvaders, [], [])
     board = new Board(grid, 15, setup)
@@ -244,12 +304,26 @@ document.addEventListener('DOMContentLoaded', () => {
     startButton.addEventListener('mousedown', () => {
         board.moveAliens()
     })
-    document.addEventListener('keydown', (e) => {
-        if(e.keyCode === 37) {
-            board.moveDefender('left')
-        } else if (e.keyCode === 39) {
-            board.moveDefender('right')
-        }
-    } )
+    game = new Game()
+    game.controls()
+    
 
 })
+
+
+// if (nextSquare.hasAlien()) {
+//             if(nextSquare.character.isDead()) {
+//                 nextSquare.setCharacter(til)
+//             } else {
+//                 nextSquare.character.health -= 1              
+//                 let alienHit = nextSquare.pickCharacterUp()
+//                 console.log(alienHit)
+//                 nextSquare.setCharacter(alienHit)
+//                 clearInterval(rocketId) 
+//             }            
+//         } else if(nextSquare.isTop()) {
+//             console.log(nextSquare.isTop())
+//             clearInterval(rocketId) 
+//         } else {
+//             nextSquare.setCharacter(til)
+//         }         
