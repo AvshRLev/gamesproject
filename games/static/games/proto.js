@@ -158,8 +158,11 @@ class Board {
         this.alienHealthLevels = Object.values(this.setupObject)
         this.direction = 1
         this.defenderLocation = this.defenderStartPosition()
+        this.Left = -1
+        this.Right = 1
 
     }
+    
     createChildSquareAddToSquares(index) {
         let div = document.createElement('div')
         this.parent.appendChild(div)
@@ -198,17 +201,15 @@ class Board {
 
     
     moveAliens() {
-        this.determineDirection()
+        this.direction = this.determineDirection()
         for (let i = 0; i < this.squares.length - 1; i++) {
             if(this.squares[i].hasAlien()) {
                 let c = this.squares[i].pickCharacterUp()
                 this.aliens.push(c)
             }
         }
-        for (let i = 0; i < this.alienLocations.length; i++) {
-            this.alienLocations[i] = this.alienLocations[i] + this.direction
-            
-        }
+        this.alienLocations = this.alienLocations.map(location =>location + this.direction)
+
         for (let i = 0; i < this.squares.length - 1; i++) {
             if (this.alienLocations.includes(i)) {
                 let c = this.aliens.shift()          
@@ -217,17 +218,45 @@ class Board {
         }
     }
 
-    determineDirection() {
-        const aliensAtLeftBorder = this.squares[this.alienLocations[0]].isLeftBorder()
-        const aliensAtRightBorder = this.squares[this.alienLocations[this.alienLocations.length - 1]].isRightBorder()
-        const Left = -1
-        const Right = 1
-        if ((aliensAtLeftBorder && this.direction === Left) || (aliensAtRightBorder && this.direction === Right)) {
-            this.direction = this.width
-        } else if (this.direction === this.width) {
-            if (aliensAtLeftBorder) this.direction = Right
-            else this.direction = Left
+    determineDirection() { 
+        let direction = this.direction    
+        if ((this.aliensAtLeftBorder() && this.aliensMovingLeft()) || (this.aliensAtRightBorder() && this.aliensMovingRight())) {
+            direction = this.width
+            return direction
+        } else if (this.aliensMovingDown()) {
+            if (this.aliensAtLeftBorder()){
+                direction = this.Right
+                return direction
+            } else {
+                direction = this.Left
+                return direction
+            } 
+            
+        } else {
+            return direction
         }
+    }
+
+    aliensAtLeftBorder() {
+        const leftMostAlien = this.alienLocations[0]
+        return this.squares[leftMostAlien].isLeftBorder()
+    }
+
+    aliensMovingLeft() {
+        return this.direction === this.Left
+    }
+
+    aliensAtRightBorder() {
+        const rightMostAlien = this.alienLocations[this.alienLocations.length - 1]
+        return this.squares[rightMostAlien].isRightBorder()
+    }
+
+    aliensMovingRight() {
+        return this.direction === this.Right
+    }
+
+    aliensMovingDown() {
+        return this.direction === this.width
     }
 
     moveDefender(direction){
