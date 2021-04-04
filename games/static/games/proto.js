@@ -101,16 +101,23 @@ class Defender {
 }
 
 class Rocket {
-    constructor(imageCssClass, indexOnBoard, boardWidth) {
+    constructor(imageCssClass, indexOnBoard, board) {
         this.imageCssClass = imageCssClass
         this.indexOnBoard = indexOnBoard
-        this.boardWidth = boardWidth
+        this.board = board
+    }
+    fly() {
+        this.board.squares[this.indexOnBoard].pickCharacterUp()
+        this.indexOnBoard = this.upTheBoard()
+        this.board.squares[this.indexOnBoard.setCharacter(this)]
+
+    }
+    upTheBoard() {
+        newIndex = this.indexOnBoard + this.board.width
+        return newIndex
     }
     getCssClass() {
         return this.imageCssClass
-    }
-    moveUp() {
-
     }
     moveTo(square) {
         square.setCharacter(this)
@@ -145,6 +152,8 @@ function createInvader(health ,indexOnBoard, lineWidth) {
 function createIntruder(indexOnBoard, lineWidth) {
     return new Alien('intruder', 2, indexOnBoard, lineWidth)
 }
+const Left = -1
+const Right = 1
 
 class Board {
     constructor(parent, width, setup) {
@@ -158,9 +167,7 @@ class Board {
         this.alienHealthLevels = Object.values(this.setupObject)
         this.direction = 1
         this.defenderLocation = this.defenderStartPosition()
-        this.Left = -1
-        this.Right = 1
-
+        
     }
     
     createChildSquareAddToSquares(index) {
@@ -208,7 +215,7 @@ class Board {
                 this.aliens.push(c)
             }
         }
-        this.alienLocations = this.alienLocations.map(location =>location + this.direction)
+        this.updateAlienLocations()
 
         for (let i = 0; i < this.squares.length - 1; i++) {
             if (this.alienLocations.includes(i)) {
@@ -218,23 +225,27 @@ class Board {
         }
     }
 
+    updateAlienLocations() {
+        return this.alienLocations = this.alienLocations.map(location =>location + this.direction)
+    }
+
     determineDirection() { 
         let direction = this.direction    
-        if ((this.aliensAtLeftBorder() && this.aliensMovingLeft()) || (this.aliensAtRightBorder() && this.aliensMovingRight())) {
-            direction = this.width
-            return direction
+        if (this.aliensHitBorder()) {            
+            return this.width
         } else if (this.aliensMovingDown()) {
             if (this.aliensAtLeftBorder()){
-                direction = this.Right
-                return direction
+                return Right
             } else {
-                direction = this.Left
-                return direction
-            } 
-            
+                return Left
+            }             
         } else {
             return direction
         }
+    }
+
+    aliensHitBorder() {
+        return (this.aliensAtLeftBorder() && this.aliensMovingLeft()) || (this.aliensAtRightBorder() && this.aliensMovingRight())
     }
 
     aliensAtLeftBorder() {
@@ -243,7 +254,7 @@ class Board {
     }
 
     aliensMovingLeft() {
-        return this.direction === this.Left
+        return this.direction === Left
     }
 
     aliensAtRightBorder() {
@@ -252,7 +263,7 @@ class Board {
     }
 
     aliensMovingRight() {
-        return this.direction === this.Right
+        return this.direction === Right
     }
 
     aliensMovingDown() {
@@ -262,60 +273,60 @@ class Board {
     moveDefender(direction){
         const defenderAtLeftBorder = this.squares[this.defenderLocation].isLeftBorder()
         const defenderAtRightBorder = this.squares[this.defenderLocation].isRightBorder()
-        const moveLeft = this.defenderLocation - 1
-        const moveRight = this.defenderLocation + 1
         let defender = this.squares[this.defenderLocation].pickCharacterUp()
         if (direction === 'left') {
             if (defenderAtLeftBorder) this.defenderLocation
-            else this.defenderLocation = moveLeft            
+            else this.defenderLocation = this.moveLeft()            
         } else if (direction === 'right') {
             if (defenderAtRightBorder) this.defenderLocation
-            else this.defenderLocation = moveRight
+            else this.defenderLocation = this.moveRight()
         }        
         this.squares[this.defenderLocation].setCharacter(defender)
+    }
+    moveLeft() {
+        return this.defenderLocation - 1
+    }
+    moveRight() {
+        this.defenderLocation + 1
     }
 
     shootRocket() {
         let rocketId
-        clearInterval(rocketId)
+        if(rocketId) clearInterval(rocketId)
         const squareAboveDefender = this.squares[this.defenderLocation-this.width]
-        let rocket = new Rocket('rocket', squareAboveDefender, this.width)
+        let rocket = new Rocket('rocket', squareAboveDefender, this)
         squareAboveDefender.setCharacter(rocket)
-        rocketId = setInterval(() => {
-            this.moveRocket(rocket, rocketId)
-            
-        }, 100);
-        
+        setInterval(rocket.fly, 100)
     }
-    moveRocket(rocket, rocketId) {
-        clearInterval(rocketId)
-        let rocketLocation = rocket.indexOnBoard.index 
-        let til = this.squares[rocketLocation].pickCharacterUp()
-        rocket.indexOnBoard.index -= this.width
-        let nextSquare = this.squares[rocket.indexOnBoard.index]
-        if (nextSquare.hasAlien()) {
-            if(nextSquare.character.isDead()) {
-                nextSquare.setCharacter(til)
-            } else {
-                nextSquare.character.health -= 1              
-                let alienHit = nextSquare.pickCharacterUp()
-                console.log(alienHit)
-                nextSquare.setCharacter(alienHit)
-                clearInterval(rocketId) 
-            }            
-        } else if(nextSquare.isTop()) {
-            console.log(nextSquare.isTop())
-            clearInterval(rocketId) 
-        } else {
-            nextSquare.setCharacter(til)
-        }         
-        // if(nextSquare.isTop()) {
-        //     nextSquare.setCharacter(til)
-        //     nextSquare.pickCharacterUp(til)
-        //     clearInterval(rocketId)
+    // moveRocket(rocket, rocketId) {        
+        
+    //     let rocketLocation = rocket.indexOnBoard.index 
+    //     let til = this.squares[rocketLocation].pickCharacterUp()
+    //     rocket.indexOnBoard.index -= this.width
+    //     let nextSquare = this.squares[rocket.board.squares.index]
+    //     if (nextSquare.hasAlien()) {
+    //         if(nextSquare.character.isDead()) {
+    //             nextSquare.setCharacter(til)
+    //         } else {
+    //             clearInterval(rocketId) 
+    //             console.log(nextSquare.character.health)              
+    //             nextSquare.character.health -= 1
+    //             let alienHit = nextSquare.pickCharacterUp()
+    //             console.log(alienHit)
+    //             nextSquare.setCharacter(alienHit)
+    //         }            
+    //     } else if(nextSquare.isTop()) {
+    //         clearInterval(rocketId) 
+    //     } else {
+    //         nextSquare.setCharacter(til)
+    //     }         
+    //     // if(nextSquare.isTop()) {
+    //     //     nextSquare.setCharacter(til)
+    //     //     nextSquare.pickCharacterUp(til)
+    //     //     clearInterval(rocketId)
 
-        // } else {nextSquare.setCharacter(til)}
-    } 
+    //     // } else {nextSquare.setCharacter(til)}
+    // } 
 }
 
 
@@ -340,19 +351,3 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-// if (nextSquare.hasAlien()) {
-//             if(nextSquare.character.isDead()) {
-//                 nextSquare.setCharacter(til)
-//             } else {
-//                 nextSquare.character.health -= 1              
-//                 let alienHit = nextSquare.pickCharacterUp()
-//                 console.log(alienHit)
-//                 nextSquare.setCharacter(alienHit)
-//                 clearInterval(rocketId) 
-//             }            
-//         } else if(nextSquare.isTop()) {
-//             console.log(nextSquare.isTop())
-//             clearInterval(rocketId) 
-//         } else {
-//             nextSquare.setCharacter(til)
-//         }         
