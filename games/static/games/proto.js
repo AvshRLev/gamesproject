@@ -8,12 +8,13 @@ class Game {
                 board.moveDefender('left')
             } else if (e.keyCode === 39) {
                 board.moveDefender('right')
-            } else if (e.keyCode === 32) {
-                board.shootRocket()
-            }
+            } 
+            // else if (e.keyCode === 32) {
+            //     board.shootRocket()
+            // }
+            if (e.keyCode === 32) board.shootRocket(e) 
         })
     }
-
 }
 
 class Setup {
@@ -107,13 +108,13 @@ class Rocket {
         this.board = board
     }
     fly() {
-        this.board.squares[this.indexOnBoard].pickCharacterUp()
+        let x = this.board.squares[this.indexOnBoard].pickCharacterUp()
         this.indexOnBoard = this.upTheBoard()
-        this.board.squares[this.indexOnBoard.setCharacter(this)]
+        this.board.squares[this.indexOnBoard].setCharacter(x)
 
     }
     upTheBoard() {
-        newIndex = this.indexOnBoard + this.board.width
+        newIndex = this.indexOnBoard - this.board.width
         return newIndex
     }
     getCssClass() {
@@ -152,8 +153,8 @@ function createInvader(health ,indexOnBoard, lineWidth) {
 function createIntruder(indexOnBoard, lineWidth) {
     return new Alien('intruder', 2, indexOnBoard, lineWidth)
 }
-const Left = -1
-const Right = 1
+const directionLeft = -1
+const directionRight = 1
 
 class Board {
     constructor(parent, width, setup) {
@@ -206,7 +207,6 @@ class Board {
         this.squares[this.defenderLocation].setCharacter(defender)
     }
 
-    
     moveAliens() {
         this.direction = this.determineDirection()
         for (let i = 0; i < this.squares.length - 1; i++) {
@@ -216,7 +216,6 @@ class Board {
             }
         }
         this.updateAlienLocations()
-
         for (let i = 0; i < this.squares.length - 1; i++) {
             if (this.alienLocations.includes(i)) {
                 let c = this.aliens.shift()          
@@ -232,16 +231,19 @@ class Board {
     determineDirection() { 
         let direction = this.direction    
         if (this.aliensHitBorder()) {            
-            return this.width
-        } else if (this.aliensMovingDown()) {
+            return this.directionDown()
+        } 
+        if (this.aliensMovingDown()) {
             if (this.aliensAtLeftBorder()){
-                return Right
-            } else {
-                return Left
-            }             
-        } else {
-            return direction
-        }
+                return directionRight
+            }  
+            return directionLeft                        
+        } 
+        return direction        
+    }
+
+    directionDown() {
+        return this.width
     }
 
     aliensHitBorder() {
@@ -254,7 +256,7 @@ class Board {
     }
 
     aliensMovingLeft() {
-        return this.direction === Left
+        return this.direction === directionLeft
     }
 
     aliensAtRightBorder() {
@@ -263,42 +265,102 @@ class Board {
     }
 
     aliensMovingRight() {
-        return this.direction === Right
+        return this.direction === directionRight
     }
 
     aliensMovingDown() {
-        return this.direction === this.width
+        return this.direction === this.directionDown()
     }
 
     moveDefender(direction){
-        const defenderAtLeftBorder = this.squares[this.defenderLocation].isLeftBorder()
-        const defenderAtRightBorder = this.squares[this.defenderLocation].isRightBorder()
-        let defender = this.squares[this.defenderLocation].pickCharacterUp()
-        if (direction === 'left') {
-            if (defenderAtLeftBorder) this.defenderLocation
-            else this.defenderLocation = this.moveLeft()            
-        } else if (direction === 'right') {
-            if (defenderAtRightBorder) this.defenderLocation
-            else this.defenderLocation = this.moveRight()
+        let defender = this.pickDefenderUp()
+        if (this.defenderCanMoveLeft(direction)) {
+            this.defenderMoveLeft()            
+        }
+        if (this.defenderCanMoveRight(direction)) {            
+            this.defenderMoveRight()
         }        
-        this.squares[this.defenderLocation].setCharacter(defender)
+        this.putDown(defender)
     }
-    moveLeft() {
-        return this.defenderLocation - 1
+    defenderCanMoveRight(direction) {
+        return direction === 'right' && this.defenderNotAtRightBorder()
     }
-    moveRight() {
-        this.defenderLocation + 1
+    defenderCanMoveLeft(direction) {
+        return direction === 'left' && this.defenderNotAtLeftBorder()
+    }
+    pickDefenderUp() {
+        return this.squares[this.defenderLocation].pickCharacterUp()
+    }
+    putDown(defender) {
+        return this.squares[this.defenderLocation].setCharacter(defender)
+    }
+    defenderNotAtLeftBorder() {
+        return !this.squares[this.defenderLocation].isLeftBorder()
+    }
+    defenderNotAtRightBorder() {
+        return !this.squares[this.defenderLocation].isRightBorder()
+    }
+    defenderMoveLeft() {
+        return this.defenderLocation = this.defenderLocation - 1
+    }
+    defenderMoveRight() {
+        return this.defenderLocation = this.defenderLocation + 1
     }
 
-    shootRocket() {
+    shootRocket(e) {
         let rocketId
-        if(rocketId) clearInterval(rocketId)
         const squareAboveDefender = this.squares[this.defenderLocation-this.width]
         let rocket = new Rocket('rocket', squareAboveDefender, this)
         squareAboveDefender.setCharacter(rocket)
-        setInterval(rocket.fly, 100)
+        function moveRocket() {
+            let rocketInFlight = squareAboveDefender.pickCharacterUp()
+            
+            rocketInFlight.indexOnBoard = rocketInFlight.indexOnBoard - this.width
+            try {
+                this.squares[rocketInFlight.indexOnBoard].setCharacter(rocketInFlight)
+            }
+            catch(err) {
+                console.log(rocketInFlight)
+            }
+        }
+        switch(e.keyCode) {
+            case 32:
+                rocketId = setInterval(moveRocket , 100)
+                break
+        }
+        
     }
-    // moveRocket(rocket, rocketId) {        
+
+    
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    let grid = document.querySelector('.grid')
+    let alienInvaders = {
+        0:1, 1:1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1,
+        15:1, 16:2, 17:2, 18:2, 19:2, 20:2, 21:2, 22:2, 23:2, 24:2,
+        30:1, 31:1, 32:1, 33:2, 34:1, 35:1, 36:1, 37:1, 38:1, 39:1,
+    }
+    setup = new Setup(alienInvaders, [], [])
+    board = new Board(grid, 15, setup)
+    board.draw(setup)
+    const startButton = document.querySelector('#start')
+    startButton.addEventListener('mousedown', () => {
+        board.moveAliens()
+    })
+    game = new Game()
+    game.controls()
+    
+    
+
+})
+
+
+
+
+
+// moveRocket(rocket, rocketId) {        
         
     //     let rocketLocation = rocket.indexOnBoard.index 
     //     let til = this.squares[rocketLocation].pickCharacterUp()
@@ -327,27 +389,3 @@ class Board {
 
     //     // } else {nextSquare.setCharacter(til)}
     // } 
-}
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    let grid = document.querySelector('.grid')
-    let alienInvaders = {
-        0:1, 1:1, 2:1, 3:1, 4:1, 5:1, 6:1, 7:1, 8:1, 9:1,
-        15:1, 16:2, 17:2, 18:2, 19:2, 20:2, 21:2, 22:2, 23:2, 24:2,
-        30:1, 31:1, 32:1, 33:2, 34:1, 35:1, 36:1, 37:1, 38:1, 39:1,
-    }
-    setup = new Setup(alienInvaders, [], [])
-    board = new Board(grid, 15, setup)
-    board.draw(setup)
-    const startButton = document.querySelector('#start')
-    startButton.addEventListener('mousedown', () => {
-        board.moveAliens()
-    })
-    game = new Game()
-    game.controls()
-    
-
-})
-
-
