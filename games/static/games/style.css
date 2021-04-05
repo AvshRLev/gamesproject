@@ -52,7 +52,26 @@ h3 {
     box-sizing: content-box;
 }
 
+.empty-square {
+    width: 30px;
+    height: 30px;
+    background-color: black;
+    box-sizing: content-box;
+}
+
+.dead {
+    width: 30px;
+    height: 30px;
+    background-color: black;
+    box-sizing: content-box;
+}
+
 .shooter {
+    background-image: url('images/spaceship.png');
+    background-size: cover;
+}
+
+.defender {
     background-image: url('images/spaceship.png');
     background-size: cover;
 }
@@ -62,12 +81,23 @@ h3 {
     background-size: cover;
 }
 
+
+.intruder {
+    background-image: url('images/intruder.png');
+    background-size: cover;
+}
+
 .boom {
     background-image: url('images/boom.png');
     background-size: cover;
 }
 
 .laser {
+    background-image: url('images/rocket.png');
+    background-size: cover;
+}
+
+.rocket {
     background-image: url('images/rocket.png');
     background-size: cover;
 }
