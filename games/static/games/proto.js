@@ -150,8 +150,9 @@ function createInvader(health ,indexOnBoard, lineWidth) {
 function createIntruder(indexOnBoard, lineWidth) {
     return new Alien('intruder', 2, indexOnBoard, lineWidth)
 }
-const directionLeft = -1
-const directionRight = 1
+const DIRECTION_LEFT = -1
+const DIRECTION_RIGHT = 1
+const DIRECTION_NON = 0
 
 class Board {
     constructor(parent, width, setup) {
@@ -232,9 +233,9 @@ class Board {
         } 
         if (this.aliensMovingDown()) {
             if (this.aliensAtLeftBorder()){
-                return directionRight
+                return DIRECTION_RIGHT
             }  
-            return directionLeft                        
+            return DIRECTION_LEFT                        
         } 
         return direction        
     }
@@ -253,7 +254,7 @@ class Board {
     }
 
     aliensMovingLeft() {
-        return this.direction === directionLeft
+        return this.direction === DIRECTION_LEFT
     }
 
     aliensAtRightBorder() {
@@ -262,7 +263,7 @@ class Board {
     }
 
     aliensMovingRight() {
-        return this.direction === directionRight
+        return this.direction === DIRECTION_RIGHT
     }
 
     aliensMovingDown() {
@@ -277,12 +278,12 @@ class Board {
     }
     calculateNextDefenderMove(direction) {
         if (this.defenderCanMoveLeft(direction)) {
-            return directionLeft            
+            return DIRECTION_LEFT            
         }
         if (this.defenderCanMoveRight(direction)) {            
-            return directionRight
+            return DIRECTION_RIGHT
         }     
-        return 0   
+        return DIRECTION_NON   
     }
     defenderMove(nextMove) {
         return this.defenderLocation = this.defenderLocation + nextMove
@@ -311,20 +312,22 @@ class Board {
         const squareAboveDefender = this.squares[this.defenderLocation-this.width]
         let rocket = new Rocket('rocket', squareAboveDefender, this)
         squareAboveDefender.setCharacter(rocket)
-        function moveRocket() {
-            let rocketInFlight = squareAboveDefender.pickCharacterUp()
-            
-            rocketInFlight.indexOnBoard = rocketInFlight.indexOnBoard - this.width
+        console.log(rocket)
+        function moveRocket(rocket) {
+            console.log(rocket)
+            let location = rocket.indexOnBoard
+            let rocketInFlight = rocket.indexOnboard.pickCharacterUp()
+            let newLocation = location - this.width
             try {
-                this.squares[rocketInFlight.indexOnBoard].setCharacter(rocketInFlight)
+                this.squares[newLocation].setCharacter(rocketInFlight)
             }
             catch(err) {
                 console.log(rocketInFlight)
             }
         }
-        switch(e.keyCode) {
+        switch(e.keyCode ) {
             case 32:
-                rocketId = setInterval(moveRocket , 100)
+                rocketId = setInterval(moveRocket , 100 , rocket)
                 break
         }
         
