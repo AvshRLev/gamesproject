@@ -9,9 +9,6 @@ class Game {
             } else if (e.keyCode === 39) {
                 board.moveDefender('right')
             } 
-            // else if (e.keyCode === 32) {
-            //     board.shootRocket()
-            // }
             if (e.keyCode === 32) board.shootRocket(e) 
         })
     }
@@ -274,13 +271,21 @@ class Board {
 
     moveDefender(direction){
         let defender = this.pickDefenderUp()
+        let nextMove = this.calculateNextDefenderMove(direction)
+        this.defenderMove(nextMove)
+        this.putDown(defender)
+    }
+    calculateNextDefenderMove(direction) {
         if (this.defenderCanMoveLeft(direction)) {
-            this.defenderMoveLeft()            
+            return directionLeft            
         }
         if (this.defenderCanMoveRight(direction)) {            
-            this.defenderMoveRight()
-        }        
-        this.putDown(defender)
+            return directionRight
+        }     
+        return 0   
+    }
+    defenderMove(nextMove) {
+        return this.defenderLocation = this.defenderLocation + nextMove
     }
     defenderCanMoveRight(direction) {
         return direction === 'right' && this.defenderNotAtRightBorder()
@@ -299,12 +304,6 @@ class Board {
     }
     defenderNotAtRightBorder() {
         return !this.squares[this.defenderLocation].isRightBorder()
-    }
-    defenderMoveLeft() {
-        return this.defenderLocation = this.defenderLocation - 1
-    }
-    defenderMoveRight() {
-        return this.defenderLocation = this.defenderLocation + 1
     }
 
     shootRocket(e) {
