@@ -356,31 +356,28 @@ class Board {
 
     shootRocket() {
         let rocketId
-        let rocket = new Rocket('rocket', this.defenderLocation - this.width, this)
-        let rocketLocation = rocket.index
-        let nextRocketLocation = rocket.index - this.width
+        let rocket = this.createRocket()
+        let rocketLocation = this.getIndexOf(rocket)
+        let nextRocketLocation = this.getNextIndexOf(rocket)
         this.squareAt(rocketLocation).setCharacter(rocket)
         rocketId = setInterval(() => {
-            let rocketInFlight = this.squareAt(rocketLocation).pickCharacterUp()
+            let rocketInFlight = this.liftRocketAt(rocketLocation)
             if (rocketInFlight.isAlien()) {
                 this.squareAt(rocketLocation).setCharacter(rocket)
-                rocketInFlight = this.squareAt(rocketLocation).pickCharacterUp()
-            }
-            
-            rocket.index -= this.width
-            rocketLocation = rocket.index
-            nextRocketLocation -= this.width
-            if (this.squareAt(rocketLocation).isTop()) {
+                rocketInFlight = this.liftRocketAt(rocketLocation)
+            }            
+            this.updateIndexOf(rocket)
+            rocketLocation = this.getIndexOf(rocket)
+            nextRocketLocation = this.update(nextRocketLocation)
+            if (this.theTopIs(rocketLocation)) {
                 clearInterval(rocketId)
-                setTimeout(() => { this.squareAt(rocketLocation).pickCharacterUp() }, 100)
+                waitAndEraseRocketAt(rocketLocation) 
             }
             if (this.squareAt(nextRocketLocation)) {
                 if (this.squareAt(nextRocketLocation).hasAlien()) {            
-                    setTimeout(() => { this.squareAt(rocketLocation).pickCharacterUp() }, 100)
                     clearInterval(rocketId)
+                    setTimeout(() => { this.liftRocketAt(rocketLocation) }, 100)
                     this.squareAt(nextRocketLocation).character.health -= 1
-                    // let alienHit = this.squareAt(nextRocketLocation).pickCharacterUp()
-                    // this.squareAt(nextRocketLocation).setCharacter(alienHit)
                 }
             }
             if (this.squareAt(rocketLocation).hasAlien()) this.squareAt(rocketLocation).setEmpty()
@@ -388,11 +385,38 @@ class Board {
 
         }, 100);
     }
+    waitAndEraseRocketAt(rocketLocation) {
+        setTimeout(() => { this.liftRocketAt(rocketLocation) }, 100)
+    }
+    theTopIs(rocketLocation) {
+        return this.squareAt(rocketLocation).isTop()
+    }
+    update(nextRocketLocation) {
+        return nextRocketLocation + this.directionUp()
+    }
+    updateIndexOf(rocket) {
+        rocket.index = rocket.index + this.directionUp()
+    }
+    liftRocketAt(rocketLocation) {
+        return this.squareAt(rocketLocation).pickCharacterUp()
+    }
+    getNextIndexOf(rocket) {
+        return rocket.index + this.directionUp()
+    }
+    getIndexOf(rocket) {
+        return rocket.index
+    }
+    createRocket() {
+        return new Rocket('rocket', this.squareAboveDefender(), this)
+    }
+    
+    squareAboveDefender() {
+        return this.defenderLocation - this.width
+    }
 
     squareAt(rocketLocation) {
         return this.squares[rocketLocation]
     }
-
 
     directionUp() {
         return -this.width
