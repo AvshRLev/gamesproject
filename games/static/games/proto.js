@@ -8,10 +8,16 @@ class Game {
         let board = new Board(grid, 15, this.setup)
         board.draw(this.setup)
         this.controls(board)
-        alienMovementId = setInterval(() => { board.moveAliens() }, 500000)
+        alienMovementId = setInterval(() => { 
+            if (board.alienLocations.length === 0) clearInterval(alienMovementId)
+            board.moveAliens() }, 500)
         const startButton = document.querySelector('#level1')
         startButton.addEventListener('mousedown', () => {
-            board.moveAliens()
+            alienMovementId = setInterval(() => { board.moveAliens() }, 500)
+        })
+        const stopButton = document.querySelector('#level2')
+        stopButton.addEventListener('mousedown', () => {
+            clearInterval(alienMovementId)
         })
     }
     controls(board) {
@@ -88,6 +94,7 @@ class Square {
         this.div.classList.add('ground')
     }
     hasAlien() {
+        if (this.character != null && this.character.health === 0) this.setEmpty()
         return (this.character != null && this.character.type === 'alien')
     }
     hasDefender() {
@@ -125,11 +132,8 @@ class Rocket {
         this.index = index
         this.board = board
     }
-    fly() {
-        let x = this.board.squares[this.indexOnBoard].pickCharacterUp()
-        this.indexOnBoard = this.upTheBoard()
-        this.board.squares[this.indexOnBoard].setCharacter(x)
-
+    isAlien() {
+        return false
     }
     upTheBoard() {
         newIndex = this.indexOnBoard - this.board.width
@@ -154,6 +158,9 @@ class Alien {
     }
     getCssClass() {
         return this.imageCssClass[this.health]
+    }
+    isAlien() {
+        return true
     }
     moveTo(square) {
         square.setCharacter(this)
@@ -184,9 +191,12 @@ class Board {
         this.setup = setup
         this.setupObject = setup.getAlienLocations()
         this.alienLocations = Object.keys(this.setupObject).map(Number)
+        this.initialAlienLocations = this.alienLocations
         this.alienHealthLevels = Object.values(this.setupObject)
-        this.direction = 1
+        this.direction = DIRECTION_RIGHT
+        this.previousDirection = DIRECTION_RIGHT
         this.defenderLocation = this.defenderStartPosition()
+        this.counter = 0
 
     }
 
@@ -235,13 +245,15 @@ class Board {
                 this.aliens.push(c)
             }
         }
-        for (let i = 0; i < this.squares.length - 1; i++) {
+        
+        for (let i = 0; i < this.squares.length; i++) {
             if (this.alienLocations.includes(i)) {
                 let c = this.aliens.shift()
                 this.squares[i].setCharacter(c)
             }
         }
     }
+
 
     calculateAlienLocations() {
         return this.squares
@@ -250,17 +262,47 @@ class Board {
     }
 
     determineDirection() {
+        this.direction = this.previousDirection
         let direction = this.direction
-        if (this.aliensHitBorder()) {
-            return this.directionDown()
+        if (this.counter < 5) {               
+            this.counter = increaseByOne(this.counter)
+            return direction
         }
-        if (this.aliensMovingDown()) {
-            if (this.aliensAtLeftBorder()) {
-                return DIRECTION_RIGHT
-            }
-            return DIRECTION_LEFT
+        if (this.counter === 5) {
+            this.counter = zero(this.counter)
+            this.changeDirection()
+            return this.directionDown()            
         }
-        return direction
+    }
+
+    changeDirection() {
+        if (this.previousDirection === DIRECTION_RIGHT) this.previousDirection = getTheOppositeOf(DIRECTION_RIGHT)
+        else if (this.previousDirection === DIRECTION_LEFT) this.previousDirection = getTheOppositeOf(DIRECTION_LEFT)
+    }
+    
+    aliensAtLeftBorder() {
+        let aliensAtLeftBorder = this.squares
+        .filter(square => square.hasAlien())
+        .filter(square => square.isLeftBorder())
+        if (aliensAtLeftBorder.length === 0) return false
+        else return true
+    }
+
+    aliensMovingLeft() {
+        return this.direction === DIRECTION_LEFT
+    }
+
+    aliensAtRightBorder() {
+        let aliensAtRightBorder = this.squares
+        .filter(square => square.hasAlien())
+        .filter(square => square.isRightBorder())
+        if (aliensAtRightBorder.length === 0) return false
+        else return true
+    
+    }
+
+    aliensMovingRight() {
+        return this.direction === DIRECTION_RIGHT
     }
 
     directionDown() {
@@ -269,24 +311,6 @@ class Board {
 
     aliensHitBorder() {
         return (this.aliensAtLeftBorder() && this.aliensMovingLeft()) || (this.aliensAtRightBorder() && this.aliensMovingRight())
-    }
-
-    aliensAtLeftBorder() {
-        const leftMostAlien = this.alienLocations[0]
-        return this.squares[leftMostAlien].isLeftBorder()
-    }
-
-    aliensMovingLeft() {
-        return this.direction === DIRECTION_LEFT
-    }
-
-    aliensAtRightBorder() {
-        const rightMostAlien = this.alienLocations[this.alienLocations.length - 1]
-        return this.squares[rightMostAlien].isRightBorder()
-    }
-
-    aliensMovingRight() {
-        return this.direction === DIRECTION_RIGHT
     }
 
     aliensMovingDown() {
@@ -335,48 +359,32 @@ class Board {
         let rocket = new Rocket('rocket', this.defenderLocation - this.width, this)
         let rocketLocation = rocket.index
         let nextRocketLocation = rocket.index - this.width
-        let deadAlien
         this.squareAt(rocketLocation).setCharacter(rocket)
         rocketId = setInterval(() => {
             let rocketInFlight = this.squareAt(rocketLocation).pickCharacterUp()
-            if (deadAlien) {
-                console.log(`deadAlien= ${deadAlien.square}`)
-                this.squares[deadAlien.square].setCharacter(deadAlien)
+            if (rocketInFlight.isAlien()) {
+                this.squareAt(rocketLocation).setCharacter(rocket)
+                rocketInFlight = this.squareAt(rocketLocation).pickCharacterUp()
             }
-            rocketLocation -= this.width
+            
+            rocket.index -= this.width
+            rocketLocation = rocket.index
             nextRocketLocation -= this.width
             if (this.squareAt(rocketLocation).isTop()) {
                 clearInterval(rocketId)
                 setTimeout(() => { this.squareAt(rocketLocation).pickCharacterUp() }, 100)
             }
             if (this.squareAt(nextRocketLocation)) {
-                if (this.squareAt(nextRocketLocation).hasAlien()) {
-                    if (!this.squareAt(nextRocketLocation).character.isDead()) {
-                        setTimeout(() => { this.squareAt(rocketLocation).pickCharacterUp() }, 200)
-                        clearInterval(rocketId)
-                        this.squareAt(nextRocketLocation).character.health -= 1
-                        let alienHit = this.squareAt(nextRocketLocation).pickCharacterUp()
-                        this.squareAt(nextRocketLocation).setCharacter(alienHit)
-                    } else if (this.squareAt(nextRocketLocation).character.isDead()) {
-                        // deadAlien = this.squareAt(nextRocketLocation).pickCharacterUp()
-                        // let newDeadAlien = new Alien('invader', 0, 0, 0)
-                        // setTimeout(() => { this.squareAt(nextRocketLocation).setCharacter(newDeadAlien) }, 100)
-                        // setTimeout(() => { console.log(this.squareAt(nextRocketLocation).character) }, 190)
-                        // console.log('here')
-                    }
+                if (this.squareAt(nextRocketLocation).hasAlien()) {            
+                    setTimeout(() => { this.squareAt(rocketLocation).pickCharacterUp() }, 100)
+                    clearInterval(rocketId)
+                    this.squareAt(nextRocketLocation).character.health -= 1
+                    // let alienHit = this.squareAt(nextRocketLocation).pickCharacterUp()
+                    // this.squareAt(nextRocketLocation).setCharacter(alienHit)
                 }
             }
-            // if (this.squareAt(rocketLocation).character) {
-            //     console.log(`this.squareAt(rocketLocation).character = ${this.squareAt(rocketLocation).hasDeadAlien()}`)
-            //     if (this.squareAt(rocketLocation).hasDeadAlien()) {
-            //         let anotherDeadAlien = this.squareAt(rocketLocation).pickCharacterUp()
-            //         this.squareAt(rocketLocation).setCharacter(rocketInFlight)
-            //         setTimeout(() => { this.squareAt(rocketLocation).setCharacter(anotherDeadAlien) }, 100)
-            //     }
-            // }
+            if (this.squareAt(rocketLocation).hasAlien()) this.squareAt(rocketLocation).setEmpty()
             this.squareAt(rocketLocation).setCharacter(rocketInFlight)
-
-
 
         }, 100);
     }
@@ -389,8 +397,21 @@ class Board {
     directionUp() {
         return -this.width
     }
+    
 }
 
+function increaseByOne(counter){
+    return counter += 1
+}
+
+function zero(counter) {
+    return counter = 0
+}
+
+function getTheOppositeOf(direction) {
+    if (direction === DIRECTION_LEFT) return DIRECTION_RIGHT
+    if (direction === DIRECTION_RIGHT) return DIRECTION_LEFT
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     // let grid = document.querySelector('.grid')
