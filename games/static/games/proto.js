@@ -370,15 +370,21 @@ class Board {
                 if (this.squareAt(nextRocketLocation).hasAlien()) {            
                     clearInterval(rocketId)
                     this.waitAndEraseRocketAt(rocketLocation)
-                    this.squareAt(nextRocketLocation).character.health -= 1
-                    let alienHit = this.squareAt(nextRocketLocation).pickCharacterUp()
-                    this.squareAt(nextRocketLocation).setCharacter(alienHit)
+                    this.reduceAlienHealthByOneAt(nextRocketLocation)
+                    this.updateAlienHitAt(nextRocketLocation)
                 }
             }
             if (this.squareAt(rocketLocation).hasAlien()) this.squareAt(rocketLocation).setEmpty()
             this.squareAt(rocketLocation).setCharacter(rocketInFlight)
 
         }, 100);
+    }
+    updateAlienHitAt(nextRocketLocation) {
+        let alienHit = this.squareAt(nextRocketLocation).pickCharacterUp()
+        this.squareAt(nextRocketLocation).setCharacter(alienHit)
+    }
+    reduceAlienHealthByOneAt(nextRocketLocation) {
+        this.squareAt(nextRocketLocation).character.health -= 1
     }
     waitAndEraseRocketAt(rocketLocation) {
         setTimeout(() => { this.liftRocketAt(rocketLocation) }, 100)
