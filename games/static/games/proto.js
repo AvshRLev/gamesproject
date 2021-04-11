@@ -22,16 +22,16 @@ class Game {
     }
     controls(board) {
         document.addEventListener('keydown', (e) => {
-            if (e.keyCode === 37) {
+            if (e.key === 'ArrowLeft') {
                 board.moveDefender('left')
             }
-            if (e.keyCode === 39) {
+            if (e.key === 'ArrowRight') {
                 board.moveDefender('right')
             }
 
         })
         document.addEventListener('keyup', (e) => {
-            if (e.keyCode === 32) {
+            if (e.key === ' ') {
                 board.shootRocket()
             }
         })
@@ -262,22 +262,15 @@ class Board {
     }
 
     determineDirection() {
-        this.direction = this.previousDirection
-        let direction = this.direction
-        if (this.counter < 5) {               
-            this.counter = increaseByOne(this.counter)
-            return direction
-        }
-        if (this.counter === 5) {
-            this.counter = zero(this.counter)
-            this.changeDirection()
-            return this.directionDown()            
-        }
+        let nextMove = calcNextAlienMove(this.previousDirection, this.counter, 5, this.directionDown())
+        this.direction = nextMove.direction
+        this.previousDirection = nextMove.previousDirection
+        this.counter = nextMove.counter
+        return nextMove.direction
     }
 
     changeDirection() {
-        if (this.previousDirection === DIRECTION_RIGHT) this.previousDirection = getTheOppositeOf(DIRECTION_RIGHT)
-        else if (this.previousDirection === DIRECTION_LEFT) this.previousDirection = getTheOppositeOf(DIRECTION_LEFT)
+        this.previousDirection = getTheOppositeOf(this.previousDirection)
     }
     
     aliensAtLeftBorder() {
@@ -322,7 +315,7 @@ class Board {
         let nextMove = this.calculateNextDefenderMove(direction)
         this.defenderMove(nextMove)
         this.putDown(defender)
-    }
+    }  
     calculateNextDefenderMove(direction) {
         if (this.defenderCanMoveLeft(direction)) {
             return DIRECTION_LEFT
@@ -371,13 +364,15 @@ class Board {
             nextRocketLocation = this.update(nextRocketLocation)
             if (this.theTopIs(rocketLocation)) {
                 clearInterval(rocketId)
-                waitAndEraseRocketAt(rocketLocation) 
+                this.waitAndEraseRocketAt(rocketLocation) 
             }
             if (this.squareAt(nextRocketLocation)) {
                 if (this.squareAt(nextRocketLocation).hasAlien()) {            
                     clearInterval(rocketId)
-                    setTimeout(() => { this.liftRocketAt(rocketLocation) }, 100)
+                    this.waitAndEraseRocketAt(rocketLocation)
                     this.squareAt(nextRocketLocation).character.health -= 1
+                    let alienHit = this.squareAt(nextRocketLocation).pickCharacterUp()
+                    this.squareAt(nextRocketLocation).setCharacter(alienHit)
                 }
             }
             if (this.squareAt(rocketLocation).hasAlien()) this.squareAt(rocketLocation).setEmpty()
@@ -423,6 +418,24 @@ class Board {
     }
     
 }
+function calcNextAlienMove(previousDirection, counter, numberOfMoves, down) {
+    if (counter < numberOfMoves) {
+        return {
+            'counter': increaseByOne(counter),
+            'previousDirection':  previousDirection, 
+            'direction': previousDirection,
+            
+        }
+    }
+    if (counter === numberOfMoves) {
+        return {
+            'counter': zero(counter),
+            'previousDirection': getTheOppositeOf(previousDirection),
+            'direction': down,
+            
+        }
+    }
+}
 
 function increaseByOne(counter){
     return counter += 1
@@ -433,27 +446,25 @@ function zero(counter) {
 }
 
 function getTheOppositeOf(direction) {
-    if (direction === DIRECTION_LEFT) return DIRECTION_RIGHT
-    if (direction === DIRECTION_RIGHT) return DIRECTION_LEFT
+    return direction * -1
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     // let grid = document.querySelector('.grid')
     let alienInvaders = {
-        0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
-        15: 1, 16: 2, 17: 2, 18: 2, 19: 2, 20: 2, 21: 2, 22: 2, 23: 2, 24: 2,
-        30: 1, 31: 1, 32: 1, 33: 2, 34: 1, 35: 1, 36: 1, 37: 1, 38: 1, 39: 1,
+        0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
+        15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
+        30: 2, 31: 1, 32: 1, 33: 1, 34: 1, 35: 1, 36: 1, 37: 1, 38: 1, 39: 1,
     }
     setup = new Setup(alienInvaders, [])
-    // board = new Board(grid, 15, setup)
-    // board.draw(setup)
+    
     const startButton = document.querySelector('#start')
     startButton.addEventListener('mousedown', () => {
         board.moveAliens()
     })
     game = new Game(setup)
     game.start()
-    // game.controls()
+    
 
 
 
