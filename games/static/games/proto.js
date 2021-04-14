@@ -7,9 +7,28 @@ class Game {
     this.restartButton = document.querySelector("#restart");
     this.isRunning = false
   }
+  win(board) {
+    return board.noAliensLeft()
+  }
+  checkLose(board, gameId) {
+    if (board.alienLocations.includes(board.defenderLocation)) {
+      return this.lose(gameId)
+    }
+     
+    if (board.squares.filter(square => square.isGround() && square.hasAlien())[0]) {
+      return this.lose(gameId)
+    }
+    
+  }
+  lose(gameId) {
+    this.grid.innerHTML = '';
+    this.grid.classList.add('youlose');
+    clearInterval(gameId);
+    this.gamePause();
+  }
   start() {
     let gameId = 0;
-    let startButtonEventHandler = () => {
+    let startButtonEvent = () => {
       if (gameId) {
         clearInterval(gameId);
         gameId = null;
@@ -117,10 +136,12 @@ class Square {
     let cssClass = character.getCssClass();
     this.div.classList.clear;
     this.div.classList.add(cssClass);
+    this.type = character.type;
   }
   setEmpty() {
     this.div.className = "";
     this.character = null;
+    this.type = null
   }
 
   setGround() {
@@ -136,7 +157,7 @@ class Square {
   }
 
   hasDefender() {
-    return this.classList.contains("defender");
+    return this.type === "defender" ;
   }
   topOfBoard() {
     return this.indexOnBoard <= this.lineWidth;
@@ -155,6 +176,7 @@ class Defender {
   constructor(imageCssClass, lineWidth) {
     this.imageCssClass = imageCssClass;
     this.lineWidth = lineWidth;
+    this.type = "defender";
   }
   getCssClass() {
     return this.imageCssClass;
@@ -166,6 +188,7 @@ class Rocket {
     this.imageCssClass = imageCssClass;
     this.index = index;
     this.board = board;
+    this.type = "rocket";
   }
   isAlien() {
     return false;
@@ -232,7 +255,7 @@ class Board {
     let div = document.createElement("div");
     this.parent.appendChild(div);
     const borders = [];
-    if (index >= this.bottomRow()) {
+    if (index >= this.twoBottomRows()) {
       borders.push("ground");
     } else if (index % this.width === 0) {
       borders.push("left");
@@ -241,8 +264,8 @@ class Board {
     }
     this.squares.push(new Square(index, div, this.width, borders));
   }
-  bottomRow() {
-    return this.width * this.width - this.width;
+  twoBottomRows() {
+    return this.width * this.width - 2*this.width;
   }
   defenderStartPosition() {
     return (
@@ -258,9 +281,9 @@ class Board {
         let invader = createInvader(health, this.squares[i].index);
         this.squares[i].setCharacter(invader);
       }
-      if (i >= this.bottomRow()) {
-        this.squares[i].setGround();
-      }
+      // if (i >= this.twoBottomRows()) {
+      //   this.squares[i].setGround();
+      // }
     }
     let defender = new Defender("defender", this.width);
     this.squares[this.defenderLocation].setCharacter(defender);
