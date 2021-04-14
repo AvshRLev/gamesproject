@@ -4,6 +4,7 @@ class Game {
     this.setup = setup;
     this.grid = document.querySelector(".grid");
     this.startButton = document.querySelector("#start");
+    this.isRunning = false
   }
   start() {
     let alienMovementId = 0;
@@ -12,9 +13,14 @@ class Game {
       if (alienMovementId) {
         clearInterval(alienMovementId);
         alienMovementId = null;
+        this.isRunning = false
       } else {
+        this.isRunning = true
         alienMovementId = setInterval(() => {
-          if (board.alienLocations.length === 0) clearInterval(alienMovementId);
+          if (board.alienLocations.length === 0){
+            clearInterval(alienMovementId);
+            this.isRunning = false
+          } 
           board.moveAliens();
         }, 500);
       }
@@ -22,17 +28,18 @@ class Game {
     board.draw(this.setup);
     this.controls(board);
   }
+  
   controls(board) {
     document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") {
+      if (e.key === "ArrowLeft" && this.isRunning) {
         board.moveDefender("left");
       }
-      if (e.key === "ArrowRight") {
+      if (e.key === "ArrowRight" && this.isRunning) {
         board.moveDefender("right");
       }
     });
     document.addEventListener("keyup", (e) => {
-      if (e.key === " ") {
+      if (e.key === " " && this.isRunning) {
         board.shootRocket();
       }
     });
@@ -430,36 +437,9 @@ function getTheOppositeOf(direction) {
 
 document.addEventListener("DOMContentLoaded", () => {
   let alienInvaders = {
-    0: 2,
-    1: 1,
-    2: 1,
-    3: 1,
-    4: 1,
-    5: 1,
-    6: 1,
-    7: 1,
-    8: 1,
-    9: 1,
-    15: 2,
-    16: 1,
-    17: 1,
-    18: 1,
-    19: 1,
-    20: 1,
-    21: 1,
-    22: 1,
-    23: 1,
-    24: 1,
-    30: 2,
-    31: 1,
-    32: 1,
-    33: 1,
-    34: 1,
-    35: 1,
-    36: 1,
-    37: 1,
-    38: 1,
-    39: 1,
+    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
+    15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
+    30: 2, 31: 1, 32: 1, 33: 1, 34: 1, 35: 1, 36: 1, 37: 1, 38: 1, 39: 1,
   };
   setup = new Setup(alienInvaders, []);
   game = new Game(setup);
