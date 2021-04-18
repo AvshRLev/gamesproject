@@ -4,31 +4,56 @@ class Game {
     this.setup = setup;
     this.grid = document.querySelector(".grid");
     this.startButton = document.querySelector("#start");
+    this.restartButton = document.querySelector("#restart");
     this.isRunning = false
   }
   start() {
-    let alienMovementId = 0;
+    let gameId = 0;
+    let cleanId = 0;
+    let start
+    let restart
     let board = new Board(this.grid, BOARD_WIDTH, this.setup);
-    this.startButton.addEventListener("mousedown", () => {
-      if (alienMovementId) {
-        clearInterval(alienMovementId);
-        alienMovementId = null;
-        this.isRunning = false
+    this.startButton.addEventListener("mousedown", start = () => {
+      if (gameId) {
+        clearInterval(gameId);
+        gameId = null;
+        this.gamePause();
       } else {
-        this.isRunning = true
-        alienMovementId = setInterval(() => {
-          if (board.alienLocations.length === 0){
-            clearInterval(alienMovementId);
-            this.isRunning = false
-          } 
-          board.moveAliens();
-        }, 500);
+          this.gameRun();
+          gameId = setInterval(() => {
+            if (board.noAliensLeft()){
+              this.grid.innerHTML = '';
+              this.grid.classList.add('youwin');
+              clearInterval(gameId);
+              this.gamePause();
+            } 
+            board.moveAliens();
+          }, 500);
       }
     });
     board.draw(this.setup);
     this.controls(board);
+    this.restartButton.addEventListener("mousedown", restart = () => {
+      clearInterval(gameId)
+      this.restart(board ,gameId, start, restart)
+    })
   }
-  
+  restart(board, gameId, start, restart) {
+    this.startButton.removeEventListener("mousedown", start)
+    this.restartButton.removeEventListener("mousedown", restart)
+    clearInterval(gameId);
+    gameId = null;
+    board = null
+    this.grid.innerHTML = '';
+    this.gamePause()
+    this.start()
+  }
+  gamePause(){
+    this.isRunning = false
+  }
+  gameRun() {
+    this.isRunning = true
+  }
   controls(board) {
     document.addEventListener("keydown", (e) => {
       if (e.key === "ArrowLeft" && this.isRunning) {
@@ -263,6 +288,10 @@ class Board {
       .map((square) => square.index + this.direction);
   }
 
+  noAliensLeft() {
+    return this.calculateAlienLocations().length === 0 
+  }
+
   determineDirection() {
     let nextMove = calcNextAlienMove(
       this.previousDirection,
@@ -327,7 +356,7 @@ class Board {
       // Sometimes if the interval is just right an alien gets picked up
       // instead of the rocket, the following if statement takes care of
       // this situation by setting the square back to rocket if it is an alien
-      if (rocketInFlight.isAlien()) {
+      if (rocketInFlight && rocketInFlight.isAlien()) {
         this.squareAt(rocketLocation).setCharacter(rocket);
         rocketInFlight = this.liftRocketAt(rocketLocation);
       }
@@ -357,10 +386,12 @@ class Board {
   }
   updateAlienHitAt(nextRocketLocation) {
     let alienHit = this.squareAt(nextRocketLocation).pickCharacterUp();
-    this.squareAt(nextRocketLocation).setCharacter(alienHit);
+    if (alienHit)
+      this.squareAt(nextRocketLocation).setCharacter(alienHit);
   }
   reduceAlienHealthByOneAt(nextRocketLocation) {
     this.squareAt(nextRocketLocation).character.health -= 1;
+    this.squareAt(nextRocketLocation).removeDeadAliens()
   }
   waitAndEraseRocketAt(rocketLocation) {
     setTimeout(() => {
@@ -438,8 +469,8 @@ function getTheOppositeOf(direction) {
 document.addEventListener("DOMContentLoaded", () => {
   let alienInvaders = {
     0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
-    15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
-    30: 2, 31: 1, 32: 1, 33: 1, 34: 1, 35: 1, 36: 1, 37: 1, 38: 1, 39: 1,
+    // 15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
+    // 30: 2, 31: 2, 32: 2, 33: 2, 34: 2, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2,
   };
   setup = new Setup(alienInvaders, []);
   game = new Game(setup);

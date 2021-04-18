@@ -101,3 +101,7 @@ h3 {
     background-image: url('images/rocket.png');
     background-size: cover;
 }
+.youwin {
+    background-image: url('images/youwin.png');
+    background-size: cover;
+}

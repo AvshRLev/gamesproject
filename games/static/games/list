@@ -1,0 +1,48 @@
+spaceship/defender:
+1.should be able to move left and right
+2.should be able to launch rockets
+3.if hit by alien game lost
+
+rocket: 
+1. should leave from spaceship upwards on board
+2.if leaves board disappears 
+3.if hits an alien turns into boom disapears and reduces 1 health from alien
+
+alien:
+1.everything we did and also 
+2.move from left to right until the right most part of the alien array touches the side of the board
+3.go down 1 row and start moving left until left most part of alien array touches left side
+4 go down 1 row and repeat steps from 2
+
+game:
+the game class does:
+1.start game
+2.pause game
+3.restart game
+All three above this line have to do with the interval so i guess game controls the interval
+4.check for and declare winning in case of killing all aliens
+5.check for and declare losing when aliens touch spaceship
+6.check for and declare losing when aliens touch the ground
+7.deals with key strokes and buttons
+8.keeping score
+9.keeping time
+10.sends data to back end
+
+board:
+everything we did and also:
+1.define ground
+2.define left side and right side
+3.gets initial values from initial setup
+
+initial setup:
+1.gets alien kinds and positions
+2.gets game speed
+3.passes initial values to board to draw
+4.gets movement pattern for aliens
+
+square:
+1.gets an index 
+2.sets the css on itself
+3.draw
+this.character.get css classlist
+
