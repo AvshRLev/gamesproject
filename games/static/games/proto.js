@@ -9,50 +9,52 @@ class Game {
   }
   start() {
     let gameId = 0;
-    let cleanId = 0;
-    let start
-    let restart
-    let board = new Board(this.grid, BOARD_WIDTH, this.setup);
-    this.startButton.addEventListener("mousedown", start = () => {
+    let startButtonEventHandler = () => {
       if (gameId) {
         clearInterval(gameId);
         gameId = null;
         this.gamePause();
-      } else {
-          this.gameRun();
-          gameId = setInterval(() => {
-            if (board.noAliensLeft()){
-              this.grid.innerHTML = '';
-              this.grid.classList.add('youwin');
-              clearInterval(gameId);
-              this.gamePause();
-            } 
-            board.moveAliens();
-          }, 500);
-      }
-    });
+        return 0
+      } 
+      this.gameRun();
+      gameId = setInterval(() => {
+        if (!board.containsAliens()){
+          this.announceWinner()
+          clearInterval(gameId);
+          this.gamePause();
+        } 
+        board.moveAliens();
+      }, 500);
+    }
+    let restartButtonEventHandler = () => {
+      clearInterval(gameId);
+      this.restart(startButtonEventHandler, restartButtonEventHandler);
+    }
+    let board = new Board(this.grid, BOARD_WIDTH, this.setup);
+    this.startButton.addEventListener("mousedown", startButtonEventHandler)
     board.draw(this.setup);
     this.controls(board);
-    this.restartButton.addEventListener("mousedown", restart = () => {
-      clearInterval(gameId)
-      this.restart(board ,gameId, start, restart)
-    })
+    this.restartButton.addEventListener("mousedown", restartButtonEventHandler)
   }
-  restart(board, gameId, start, restart) {
-    this.startButton.removeEventListener("mousedown", start)
-    this.restartButton.removeEventListener("mousedown", restart)
-    clearInterval(gameId);
-    gameId = null;
-    board = null
+  announceWinner() {
     this.grid.innerHTML = '';
-    this.gamePause()
-    this.start()
+    this.grid.classList.add('youwin');
+  }
+  restart(startButtonEventHandler, restartButtonEventHandler) {
+    this.startButton.removeEventListener("mousedown", startButtonEventHandler);
+    this.restartButton.removeEventListener("mousedown", restartButtonEventHandler);
+    this.cleanBoard();
+    this.gamePause();
+    this.start();
+  }
+  cleanBoard() {
+    this.grid.innerHTML = '';
   }
   gamePause(){
-    this.isRunning = false
+    this.isRunning = false;
   }
   gameRun() {
-    this.isRunning = true
+    this.isRunning = true;
   }
   controls(board) {
     document.addEventListener("keydown", (e) => {
@@ -288,8 +290,8 @@ class Board {
       .map((square) => square.index + this.direction);
   }
 
-  noAliensLeft() {
-    return this.calculateAlienLocations().length === 0 
+  containsAliens() {
+    return this.alienLocations.length != 0 
   }
 
   determineDirection() {
@@ -357,6 +359,8 @@ class Board {
       // instead of the rocket, the following if statement takes care of
       // this situation by setting the square back to rocket if it is an alien
       if (rocketInFlight && rocketInFlight.isAlien()) {
+        // if (rocketInFlight && this needs to be adressed so that rocketInFlight 
+        // will not be able to return null 
         this.squareAt(rocketLocation).setCharacter(rocket);
         rocketInFlight = this.liftRocketAt(rocketLocation);
       }
@@ -381,7 +385,8 @@ class Board {
       }
       // After checking and preparing all conditions we put down the rocket in the
       // next location up the board whic after update is rocketLocation
-      this.squareAt(rocketLocation).setCharacter(rocketInFlight);
+      if (this.squareAt(rocketLocation))
+        this.squareAt(rocketLocation).setCharacter(rocketInFlight);
     }, 100);
   }
   updateAlienHitAt(nextRocketLocation) {
