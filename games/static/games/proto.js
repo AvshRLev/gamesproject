@@ -7,20 +7,8 @@ class Game {
     this.restartButton = document.querySelector("#restart");
     this.isRunning = false
   }
-  win(board) {
-    return board.noAliensLeft()
-  }
-  checkLose(board, gameId) {
-    if (board.alienLocations.includes(board.defenderLocation)) {
-      return this.lose(gameId)
-    }
-     
-    if (board.squares.filter(square => square.isGround() && square.hasAlien())[0]) {
-      return this.lose(gameId)
-    }
-    
-  }
-  lose(gameId) {
+
+  announceLose(gameId) {
     this.grid.innerHTML = '';
     this.grid.classList.add('youlose');
     clearInterval(gameId);
@@ -28,20 +16,23 @@ class Game {
   }
   start() {
     let gameId = 0;
-    let startButtonEvent = () => {
+    let startButtonEventHandler = () => {
       if (gameId) {
         clearInterval(gameId);
-        gameId = null;
+        gameId = zero()
         this.gamePause();
         return 0
       } 
       this.gameRun();
       gameId = setInterval(() => {
-        if (!board.containsAliens()){
-          this.announceWinner()
-          clearInterval(gameId);
-          this.gamePause();
+        if (allAliensDeadOn(board)){
+          this.announceWin(gameId)
+          return           
         } 
+        if (aliensHitGround(board)) {
+          this.announceLose(gameId)
+          return 
+        }
         board.moveAliens();
       }, 500);
     }
@@ -55,9 +46,12 @@ class Game {
     this.controls(board);
     this.restartButton.addEventListener("mousedown", restartButtonEventHandler)
   }
-  announceWinner() {
+  announceWin(gameId) {
     this.grid.innerHTML = '';
+    this.grid.classList.remove('youlose');
     this.grid.classList.add('youwin');
+    clearInterval(gameId);
+    this.gamePause();
   }
   restart(startButtonEventHandler, restartButtonEventHandler) {
     this.startButton.removeEventListener("mousedown", startButtonEventHandler);
@@ -90,6 +84,14 @@ class Game {
       }
     });
   }
+}
+
+function allAliensDeadOn(board) {
+  return !board.containsAliens()
+}
+
+function aliensHitGround(board) {
+  return board.squares.some(square => square.isGround() && square.hasAlien())
 }
 
 class Setup {
@@ -257,9 +259,11 @@ class Board {
     const borders = [];
     if (index >= this.twoBottomRows()) {
       borders.push("ground");
-    } else if (index % this.width === 0) {
+    }
+    if (index % this.width === 0) {
       borders.push("left");
-    } else if (index % this.width === this.width - 1) {
+    }
+    if (index % this.width === this.width - 1) {
       borders.push("right");
     }
     this.squares.push(new Square(index, div, this.width, borders));
@@ -281,12 +285,10 @@ class Board {
         let invader = createInvader(health, this.squares[i].index);
         this.squares[i].setCharacter(invader);
       }
-      // if (i >= this.twoBottomRows()) {
-      //   this.squares[i].setGround();
-      // }
     }
     let defender = new Defender("defender", this.width);
-    this.squares[this.defenderLocation].setCharacter(defender);
+    let square = this.squares[this.defenderLocation];
+    square.setCharacter(defender);
   }
 
   moveAliens() {
@@ -496,7 +498,7 @@ function getTheOppositeOf(direction) {
 
 document.addEventListener("DOMContentLoaded", () => {
   let alienInvaders = {
-    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
+    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 180: 1
     // 15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
     // 30: 2, 31: 2, 32: 2, 33: 2, 34: 2, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2,
   };
