@@ -105,3 +105,7 @@ h3 {
     background-image: url('images/youwin.png');
     background-size: cover;
 }
+.youlose {
+    background-image: url('images/youlose.png');
+    background-size: cover;
+}

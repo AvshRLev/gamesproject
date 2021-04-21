@@ -7,22 +7,32 @@ class Game {
     this.restartButton = document.querySelector("#restart");
     this.isRunning = false
   }
+
+  announceLose(gameId) {
+    this.grid.innerHTML = '';
+    this.grid.classList.add('youlose');
+    clearInterval(gameId);
+    this.gamePause();
+  }
   start() {
     let gameId = 0;
     let startButtonEventHandler = () => {
       if (gameId) {
         clearInterval(gameId);
-        gameId = null;
+        gameId = zero()
         this.gamePause();
         return 0
       } 
       this.gameRun();
       gameId = setInterval(() => {
-        if (!board.containsAliens()){
-          this.announceWinner()
-          clearInterval(gameId);
-          this.gamePause();
+        if (allAliensDeadOn(board)){
+          this.announceWin(gameId)
+          return           
         } 
+        if (aliensHitGround(board)) {
+          this.announceLose(gameId)
+          return 
+        }
         board.moveAliens();
       }, 500);
     }
@@ -36,9 +46,12 @@ class Game {
     this.controls(board);
     this.restartButton.addEventListener("mousedown", restartButtonEventHandler)
   }
-  announceWinner() {
+  announceWin(gameId) {
     this.grid.innerHTML = '';
+    this.grid.classList.remove('youlose');
     this.grid.classList.add('youwin');
+    clearInterval(gameId);
+    this.gamePause();
   }
   restart(startButtonEventHandler, restartButtonEventHandler) {
     this.startButton.removeEventListener("mousedown", startButtonEventHandler);
@@ -71,6 +84,14 @@ class Game {
       }
     });
   }
+}
+
+function allAliensDeadOn(board) {
+  return !board.containsAliens()
+}
+
+function aliensHitGround(board) {
+  return board.squares.some(square => square.isGround() && square.hasAlien())
 }
 
 class Setup {
@@ -117,10 +138,12 @@ class Square {
     let cssClass = character.getCssClass();
     this.div.classList.clear;
     this.div.classList.add(cssClass);
+    this.type = character.type;
   }
   setEmpty() {
     this.div.className = "";
     this.character = null;
+    this.type = null
   }
 
   setGround() {
@@ -136,7 +159,7 @@ class Square {
   }
 
   hasDefender() {
-    return this.classList.contains("defender");
+    return this.type === "defender" ;
   }
   topOfBoard() {
     return this.indexOnBoard <= this.lineWidth;
@@ -155,6 +178,7 @@ class Defender {
   constructor(imageCssClass, lineWidth) {
     this.imageCssClass = imageCssClass;
     this.lineWidth = lineWidth;
+    this.type = "defender";
   }
   getCssClass() {
     return this.imageCssClass;
@@ -166,6 +190,7 @@ class Rocket {
     this.imageCssClass = imageCssClass;
     this.index = index;
     this.board = board;
+    this.type = "rocket";
   }
   isAlien() {
     return false;
@@ -232,17 +257,19 @@ class Board {
     let div = document.createElement("div");
     this.parent.appendChild(div);
     const borders = [];
-    if (index >= this.bottomRow()) {
+    if (index >= this.twoBottomRows()) {
       borders.push("ground");
-    } else if (index % this.width === 0) {
+    }
+    if (index % this.width === 0) {
       borders.push("left");
-    } else if (index % this.width === this.width - 1) {
+    }
+    if (index % this.width === this.width - 1) {
       borders.push("right");
     }
     this.squares.push(new Square(index, div, this.width, borders));
   }
-  bottomRow() {
-    return this.width * this.width - this.width;
+  twoBottomRows() {
+    return this.width * this.width - 2*this.width;
   }
   defenderStartPosition() {
     return (
@@ -258,12 +285,10 @@ class Board {
         let invader = createInvader(health, this.squares[i].index);
         this.squares[i].setCharacter(invader);
       }
-      if (i >= this.bottomRow()) {
-        this.squares[i].setGround();
-      }
     }
     let defender = new Defender("defender", this.width);
-    this.squares[this.defenderLocation].setCharacter(defender);
+    let square = this.squares[this.defenderLocation];
+    square.setCharacter(defender);
   }
 
   moveAliens() {
@@ -473,7 +498,7 @@ function getTheOppositeOf(direction) {
 
 document.addEventListener("DOMContentLoaded", () => {
   let alienInvaders = {
-    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
+    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 180: 1
     // 15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
     // 30: 2, 31: 2, 32: 2, 33: 2, 34: 2, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2,
   };
