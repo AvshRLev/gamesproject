@@ -5,9 +5,27 @@ class Game {
     this.grid = document.querySelector(".grid");
     this.startButton = document.querySelector("#start");
     this.restartButton = document.querySelector("#restart");
-    this.isRunning = false
+    this.timeDisplay = document.querySelector("#time");
+    this.time = 0;
+    this.isRunning = false;
   }
-
+  timerRun() {
+    if (this.isRunning) {
+      this.time = addOneTo(this.time);
+      this.timeDisplayUpdate();
+    }
+  }
+  timerReset() {
+    this.time = zero();
+    this.timeDisplayUpdate();
+  }
+  timeDisplayUpdate() {
+    this.timeDisplay.innerHTML = this.time.toLocaleString('en-US', {
+      minimumIntegerDigits: 2,
+      useGrouping: false
+    });
+  }
+  
   announceLose(gameId) {
     this.grid.innerHTML = '';
     this.grid.classList.add('youlose');
@@ -16,12 +34,16 @@ class Game {
   }
   start() {
     let gameId = 0;
+    let timerId = 0;
+    timerId = setInterval(() => {
+      this.timerRun();
+    }, 1000)
     let startButtonEventHandler = () => {
       if (gameId) {
         clearInterval(gameId);
-        gameId = zero()
+        gameId = zero();
         this.gamePause();
-        return 0
+        return 
       } 
       this.gameRun();
       gameId = setInterval(() => {
@@ -38,6 +60,8 @@ class Game {
     }
     let restartButtonEventHandler = () => {
       clearInterval(gameId);
+      clearInterval(timerId);
+      this.timerReset();
       this.restart(startButtonEventHandler, restartButtonEventHandler);
     }
     let board = new Board(this.grid, BOARD_WIDTH, this.setup);
@@ -93,6 +117,9 @@ function allAliensDeadOn(board) {
 function aliensHitGround(board) {
   return board.squares.some(square => square.isGround() && square.hasAlien())
 }
+function addOneTo(time) {
+  return time + 1
+}
 
 class Setup {
   constructor(alienLocations, gameSpeed) {
@@ -128,7 +155,7 @@ class Square {
   isGround() {
     return this.borders.includes("ground");
   }
-
+  
   isTop() {
     return this.index < this.lineWidth;
   }
@@ -498,7 +525,7 @@ function getTheOppositeOf(direction) {
 
 document.addEventListener("DOMContentLoaded", () => {
   let alienInvaders = {
-    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 180: 1
+    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 180: 1 
     // 15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
     // 30: 2, 31: 2, 32: 2, 33: 2, 34: 2, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2,
   };
