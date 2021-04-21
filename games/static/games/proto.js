@@ -51,6 +51,7 @@ class Game {
   
   announceLose(gameId) {
     this.grid.innerHTML = '';
+    this.grid.classList.remove('youwin');
     this.grid.classList.add('youlose');
     clearInterval(gameId);
     this.gamePause();
@@ -58,6 +59,10 @@ class Game {
   start() {
     let gameId = 0;
     let timerId = 0;
+    let scoreId = 0;
+    scoreId = setInterval(() => {
+      this.keepScore(board)
+    }, 100)
     timerId = setInterval(() => {
       this.timerRun();
     }, 1000)
@@ -79,12 +84,12 @@ class Game {
           return 
         }
         board.moveAliens();
-        this.keepScore(board)
       }, 500);
     }
     let restartButtonEventHandler = () => {
       clearInterval(gameId);
       clearInterval(timerId);
+      clearInterval(scoreId);
       this.timerReset();
       this.scoreReset();
       this.restart(startButtonEventHandler, restartButtonEventHandler);
@@ -300,7 +305,7 @@ class Board {
     this.initialAlienLocations = this.alienLocations;
     this.alienHealthLevels = Object.values(this.setupObject);
     this.initialTotalAlienHealth = this.alienHealthLevels.reduce((a,b) => a + b, 0);
-    this.currentTotalalienHealth = this.initialTotalAlienHealth;
+    this.currentTotalAlienHealth = this.initialTotalAlienHealth;
     this.direction = DIRECTION_RIGHT;
     this.previousDirection = DIRECTION_RIGHT;
     this.defenderLocation = this.defenderStartPosition();
@@ -348,7 +353,6 @@ class Board {
 
   moveAliens() {
     this.determineDirection();
-    console.log(this.currentTotalalienHealth)
     this.alienLocations = this.calculateAlienLocations();
     this.updateCurrentTotalAlienHealth()
     this.updateScore()
@@ -367,18 +371,16 @@ class Board {
     }
   }
   calculateCurrentTotalAlienHealth() {
-    let alienTotal = []
-    this.squares
-      .filter((square) => square.hasAlien())
-      .map((square) => alienTotal.push(square.character.health))
-    alienTotal = alienTotal.reduce((a,b) => a + b, 0);
-    return alienTotal
+    return this.squares
+                  .filter((square) => square.hasAlien())
+                  .map((square) => square.character.health)
+                  .reduce((a,b) => a + b, 0);
   }
   updateCurrentTotalAlienHealth() {
-    this.currentTotalalienHealth = this.calculateCurrentTotalAlienHealth()
+    this.currentTotalAlienHealth = this.calculateCurrentTotalAlienHealth()
   }
   calculateScore() {
-    return this.initialTotalAlienHealth - this.currentTotalalienHealth
+    return (this.initialTotalAlienHealth - this.currentTotalAlienHealth) * 10
   }
   updateScore() {
     this.score = this.calculateScore()
@@ -458,7 +460,7 @@ class Board {
       // Sometimes if the interval is just right an alien gets picked up
       // instead of the rocket, the following if statement takes care of
       // this situation by setting the square back to rocket if it is an alien
-      if (rocketInFlight.isAlien()) {
+      if (rocketInFlight && rocketInFlight.isAlien()) {
         // if (rocketInFlight && this needs to be adressed so that rocketInFlight 
         // will not be able to return null
         this.squareAt(rocketLocation).setCharacter(rocket);
@@ -475,7 +477,7 @@ class Board {
       // and if it is an alien erase the rocket, reduce the aliens health by
       // one and set the square's css according to the new alien's health level
       if (this.squareAt(nextRocketLocation)) {
-        // this.squareAt(nextRocketLocation).removeDeadAliens();
+        this.squareAt(nextRocketLocation).removeDeadAliens();
         if (this.squareAt(nextRocketLocation).hasAlien()) {
           clearInterval(rocketId);
           this.waitAndEraseRocketAt(rocketLocation);
@@ -558,9 +560,6 @@ function calcNextAlienMove(
       direction: down,
     };
   }
-}
-function increaseByTen(score) {
-  return score + 10;
 }
 
 function increaseByOne(movementCounter) {
