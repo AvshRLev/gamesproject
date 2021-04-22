@@ -7,8 +7,31 @@ class Game {
     this.restartButton = document.querySelector("#restart");
     this.timeDisplay = document.querySelector("#time");
     this.time = 0;
+    this.scoreDisplay = document.querySelector("#score");
+    this.score = 0;
     this.isRunning = false;
   }
+  keepScore(board) {
+    this.score = this.updateScore(board);
+    this.scoreDisplayUpdate();
+  }
+
+  updateScore(board) {
+    return board.score;
+  }
+
+  scoreDisplayUpdate() {
+    this.scoreDisplay.innerHTML = this.score.toLocaleString('en-US', {
+      minimumIntegerDigits: 4,
+      useGrouping: false
+    });
+  }
+
+  scoreReset() {
+    this.score = zero();
+    this.scoreDisplayUpdate()
+  }
+
   timerRun() {
     if (this.isRunning) {
       this.time = addOneTo(this.time);
@@ -28,6 +51,7 @@ class Game {
   
   announceLose(gameId) {
     this.grid.innerHTML = '';
+    this.grid.classList.remove('youwin');
     this.grid.classList.add('youlose');
     clearInterval(gameId);
     this.gamePause();
@@ -35,6 +59,10 @@ class Game {
   start() {
     let gameId = 0;
     let timerId = 0;
+    let scoreId = 0;
+    scoreId = setInterval(() => {
+      this.keepScore(board)
+    }, 100)
     timerId = setInterval(() => {
       this.timerRun();
     }, 1000)
@@ -61,7 +89,9 @@ class Game {
     let restartButtonEventHandler = () => {
       clearInterval(gameId);
       clearInterval(timerId);
+      clearInterval(scoreId);
       this.timerReset();
+      this.scoreReset();
       this.restart(startButtonEventHandler, restartButtonEventHandler);
     }
     let board = new Board(this.grid, BOARD_WIDTH, this.setup);
@@ -274,10 +304,13 @@ class Board {
     this.alienLocations = Object.keys(this.setupObject).map(Number);
     this.initialAlienLocations = this.alienLocations;
     this.alienHealthLevels = Object.values(this.setupObject);
+    this.initialTotalAlienHealth = this.alienHealthLevels.reduce((a,b) => a + b, 0);
+    this.currentTotalAlienHealth = this.initialTotalAlienHealth;
     this.direction = DIRECTION_RIGHT;
     this.previousDirection = DIRECTION_RIGHT;
     this.defenderLocation = this.defenderStartPosition();
     this.movementCounter = 0;
+    this.score = 0;
   }
 
   createChildSquareAddToSquares(index) {
@@ -321,6 +354,8 @@ class Board {
   moveAliens() {
     this.determineDirection();
     this.alienLocations = this.calculateAlienLocations();
+    this.updateCurrentTotalAlienHealth()
+    this.updateScore()
     for (let i = 0; i < this.squares.length - 1; i++) {
       if (this.squares[i].hasAlien()) {
         let c = this.squares[i].pickCharacterUp();
@@ -334,6 +369,21 @@ class Board {
         this.squares[i].setCharacter(c);
       }
     }
+  }
+  calculateCurrentTotalAlienHealth() {
+    return this.squares
+                  .filter((square) => square.hasAlien())
+                  .map((square) => square.character.health)
+                  .reduce((a,b) => a + b, 0);
+  }
+  updateCurrentTotalAlienHealth() {
+    this.currentTotalAlienHealth = this.calculateCurrentTotalAlienHealth()
+  }
+  calculateScore() {
+    return (this.initialTotalAlienHealth - this.currentTotalAlienHealth) * 10
+  }
+  updateScore() {
+    this.score = this.calculateScore()
   }
 
   calculateAlienLocations() {
@@ -412,7 +462,7 @@ class Board {
       // this situation by setting the square back to rocket if it is an alien
       if (rocketInFlight && rocketInFlight.isAlien()) {
         // if (rocketInFlight && this needs to be adressed so that rocketInFlight 
-        // will not be able to return null 
+        // will not be able to return null
         this.squareAt(rocketLocation).setCharacter(rocket);
         rocketInFlight = this.liftRocketAt(rocketLocation);
       }
@@ -441,6 +491,7 @@ class Board {
         this.squareAt(rocketLocation).setCharacter(rocketInFlight);
     }, 100);
   }
+
   updateAlienHitAt(nextRocketLocation) {
     let alienHit = this.squareAt(nextRocketLocation).pickCharacterUp();
     if (alienHit)
