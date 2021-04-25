@@ -218,6 +218,9 @@ class Square {
   hasDefender() {
     return this.type === "defender" ;
   }
+  hasRocket() {
+    return this.type === "rocket";
+  }
   topOfBoard() {
     return this.indexOnBoard <= this.lineWidth;
   }
@@ -455,17 +458,19 @@ class Board {
     let rocketLocation = this.getIndexOf(rocket);
     let nextRocketLocation = this.getNextIndexOf(rocket);
     this.squareAt(rocketLocation).setCharacter(rocket);
+    
     rocketId = setInterval(() => {
-      let rocketInFlight = this.liftRocketAt(rocketLocation);
       // Sometimes if the interval is just right an alien gets picked up
       // instead of the rocket, the following if statement takes care of
-      // this situation by setting the square back to rocket if it is an alien
-      if (rocketInFlight && rocketInFlight.isAlien()) {
-        // if (rocketInFlight && this needs to be adressed so that rocketInFlight 
-        // will not be able to return null
-        this.squareAt(rocketLocation).setCharacter(rocket);
-        rocketInFlight = this.liftRocketAt(rocketLocation);
+      // this situation by removing the alien that was effectively hit by a rocket
+      if (!this.squareAt(rocketLocation).hasRocket()) {
+        this.squareAt(rocketLocation).setEmpty()
+        // Here we clear the interval because otherwise this interval of the rocket will 
+        // keep trying to find that rocket but it is not there 
+        clearInterval(rocketId)
+        return
       }
+      let rocketInFlight = this.liftRocketAt(rocketLocation, rocketId);
       this.updateIndexOf(rocket);
       rocketLocation = this.getIndexOf(rocket);
       nextRocketLocation = this.update(nextRocketLocation);
@@ -515,8 +520,13 @@ class Board {
   updateIndexOf(rocket) {
     rocket.index = rocket.index + this.directionUp();
   }
-  liftRocketAt(rocketLocation) {
-    return this.squareAt(rocketLocation).pickCharacterUp();
+  liftRocketAt(rocketLocation, rocketId) {
+    let rocket = this.squareAt(rocketLocation).pickCharacterUp();
+    if (!rocket) {
+      clearInterval(rocketId)
+      throw new Error("couldnt find rocket at location: " + rocketLocation);
+    }
+    return rocket
   }
   getNextIndexOf(rocket) {
     return rocket.index + this.directionUp();
@@ -576,9 +586,9 @@ function getTheOppositeOf(direction) {
 
 document.addEventListener("DOMContentLoaded", () => {
   let alienInvaders = {
-    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 180: 1 
-    // 15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
-    // 30: 2, 31: 2, 32: 2, 33: 2, 34: 2, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2,
+    0: 2, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 180: 1 ,
+    15: 2, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
+    30: 2, 31: 2, 32: 2, 33: 2, 34: 2, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2,
   };
   setup = new Setup(alienInvaders, []);
   game = new Game(setup);
