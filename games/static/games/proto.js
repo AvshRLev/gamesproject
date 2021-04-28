@@ -592,17 +592,17 @@ function getTheOppositeOf(direction) {
 function level(level) {
   document.querySelector("#game").style.display = "block";
   document.querySelector("#level-select").style.display = "none";
-  setup = new Setup(level, []);
-  game = new Game(setup);
+  let setup = new Setup(level, []);
+  let game = new Game(setup);
   game.start();
 }
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#game").style.display = "none";
   document.querySelector("#level-select").style.display = "block";
-  level1Button = document.querySelector("#level1");
-  level2Button = document.querySelector("#level2");
-  level3Button = document.querySelector("#level3");
-  level4Button = document.querySelector("#level4");
+  let level1Button = document.querySelector("#level1");
+  let level2Button = document.querySelector("#level2");
+  let level3Button = document.querySelector("#level3");
+  let level4Button = document.querySelector("#level4");
   let level1 = {
     0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1,
     15: 1, 16: 1, 17: 1, 18: 1, 19: 1, 20: 1, 21: 1, 22: 1, 23: 1, 24: 1,
