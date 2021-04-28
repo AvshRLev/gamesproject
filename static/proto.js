@@ -1,3 +1,4 @@
+import {zero} from './zero.js'
 const BOARD_WIDTH = 15;
 class Game {
   constructor(setup) {
@@ -581,9 +582,6 @@ function increaseByOne(movementCounter) {
   return movementCounter + 1;
 }
 
-function zero() {
-  return 0;
-}
 
 function getTheOppositeOf(direction) {
   return direction * -1;
