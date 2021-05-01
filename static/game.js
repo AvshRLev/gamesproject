@@ -1,5 +1,5 @@
-import {zero} from './zero.js'
-import {Board} from './board.js'
+const zero = require('./zero')
+const Board = require('./board.js')
 
 const BOARD_WIDTH = 15;
 
@@ -158,6 +158,5 @@ function addOneTo(time) {
   return time + 1;
 }
 
-export {
-    Game
-}
+module.exports = Game;
+

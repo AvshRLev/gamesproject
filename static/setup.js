@@ -14,6 +14,5 @@ class Setup {
     }
   }
 
-  export {
-      Setup
-  }
+  module.exports = Setup;
+  

@@ -19,6 +19,4 @@ class Alien {
     }
   }
 
-  export {
-      Alien
-  }
+  module.exports = Alien;

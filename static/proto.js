@@ -1,5 +1,5 @@
-import {Game} from './game.js'
-import {Setup} from './setup.js'
+const Game = require('./game')
+const Setup = require('./setup')
 
 function level(level) {
   document.querySelector("#game").style.display = "block";
