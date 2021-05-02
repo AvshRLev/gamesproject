@@ -1,8 +1,8 @@
-import {Square} from './square.js'
-import {Defender} from './defender.js'
-import {Rocket} from './rocket.js'
-import {Alien} from './alien.js'
-import {zero} from './zero.js'
+const zero = require('./zero')
+const Defender = require('./defender.js')
+const Square = require('./square.js')
+const Rocket = require('./rocket.js')
+const Alien = require('./alien.js')
 
 const DIRECTION_LEFT = -1;
 const DIRECTION_RIGHT = 1;
@@ -299,6 +299,4 @@ class Board {
     return alien;
   }  
 
-  export {
-      Board,
-  }
+  module.exports = Board;

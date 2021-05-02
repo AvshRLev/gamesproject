@@ -9,6 +9,4 @@ class Defender {
     }
   }
 
-  export {
-      Defender
-  }
+  module.exports = Defender;

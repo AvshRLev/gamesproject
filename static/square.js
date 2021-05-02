@@ -65,6 +65,6 @@ class Square {
     }
   }
 
-  export {
-      Square
-  }
+
+  module.exports = Square;
+  

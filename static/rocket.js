@@ -20,6 +20,6 @@ class Rocket {
     }
   }
 
-  export {
-      Rocket
-  }
+module.exports = Rocket;
+
+  
