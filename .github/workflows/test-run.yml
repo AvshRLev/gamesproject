@@ -1,0 +1,11 @@
+name: run-my-tests
+on: [push]
+jobs:
+  run-my-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: pip install django
+      - run: python manage.py runserver & sleep 10 && npm ci && npm test
+      
