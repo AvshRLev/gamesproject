@@ -22,5 +22,5 @@ afterEach(async() => {
 
 test("press level 1 button gets level 1", async() => {
   await page.click('button#level1');
-  await expect(page.title()).resolves.toMatch('level1');
+  await expect(page.title()).resolves.toMatch('Level 1');
 });

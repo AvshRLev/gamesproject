@@ -1,9 +1,10 @@
 const Game = require('./game')
 const Setup = require('./setup')
 
-function level(level) {
+function level(level,levelName) {
   document.querySelector("#game").style.display = "block";
   document.querySelector("#level-select").style.display = "none";
+  document.querySelector("title").innerHTML = levelName
   let setup = new Setup(level, []);
   let game = new Game(setup);
   game.start();
@@ -37,15 +38,16 @@ document.addEventListener("DOMContentLoaded", () => {
     45: 1, 46: 1, 47: 1, 48: 1, 49: 1, 50: 1, 51: 1, 52: 1, 53: 1, 54: 1,
   };
   level1Button.addEventListener("click", () => {
-    level(level1);
+    console.log('level1 clicked')
+    level(level1, "Level 1");
   });
   level2Button.addEventListener("click", () => {
-    level(level2);
+    level(level2, "Level 2");
   });
   level3Button.addEventListener("click", () => {
-    level(level3);
+    level(level3, "Level 3");
   });
   level4Button.addEventListener("click", () => {
-    level(level4);
+    level(level4, "Level 4");
   });
 });
