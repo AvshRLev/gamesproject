@@ -22,5 +22,5 @@ afterEach(async() => {
 
 test("clicking level 1 button changes title to be level1", async() => {
   await page.click('button#level1');
-  await expect(page.title()).resolves.toMatch('level1');
+  await expect(page.title()).resolves.toMatch('Level 1');
 });
