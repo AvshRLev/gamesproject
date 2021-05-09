@@ -7,7 +7,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
       - run: pip install django
-      - run: python manage.py runserver
-      - run: npm ci
-      - run: npm test
+      - run: python manage.py runserver & sleep 10 && npm ci && npm test
+      
      
