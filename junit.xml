@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="5" failures="0" errors="0" time="8.824">
+  <testsuite name="Defender is the spaceship that shoots the aliens" errors="0" failures="0" skipped="0" timestamp="2021-05-10T13:10:55" time="1.78" tests="1">
+    <testcase classname="Defender is the spaceship that shoots the aliens get its css class" name="Defender is the spaceship that shoots the aliens get its css class" time="0.024">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2021-05-10T13:10:57" time="0.652" tests="1">
+    <testcase classname=" returns zero" name=" returns zero" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Games" errors="0" failures="0" skipped="0" timestamp="2021-05-10T13:10:55" time="5.045" tests="1">
+    <testcase classname="Games should be titled &quot;Games&quot;" name="Games should be titled &quot;Games&quot;" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2021-05-10T13:10:55" time="6.767" tests="2">
+    <testcase classname=" test space invaders url" name=" test space invaders url" time="2.919">
+    </testcase>
+    <testcase classname=" clicking level 1 button changes title to be level1" name=" clicking level 1 button changes title to be level1" time="1.493">
+    </testcase>
+  </testsuite>
+</testsuites>

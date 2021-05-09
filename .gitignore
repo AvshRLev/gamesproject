@@ -114,3 +114,7 @@ out
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+project/pycache/
+static/dist/
+junit.xml

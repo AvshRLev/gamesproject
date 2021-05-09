@@ -1,5 +1,7 @@
-const zero = require('../static/zero');
+const zero = require("../static/zero");
 
-test('returns zero', () => {
+describe("A function that returns zero", () => {
+  test("returns zero", () => {
     expect(zero()).toBe(0);
+  });
 });
