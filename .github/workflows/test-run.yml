@@ -8,7 +8,7 @@ jobs:
       - uses: actions/setup-node@v1
       - run: pip install django
       - run: npm ci
-      - run: python manage.py runserver & sleep 10 && npm test
+      - run: make all & sleep 10 && npm test
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if previous step failed
