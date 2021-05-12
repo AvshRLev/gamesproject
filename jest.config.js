@@ -1,3 +1,5 @@
 module.exports = {
-    "preset": "jest-puppeteer"
-}
+  preset: "jest-puppeteer",
+  reporters: ["default", "jest-junit"],
+  testResultsProcessor: "jest-junit",
+};
