@@ -117,7 +117,9 @@ out
 
 project/__pycache__/
 static/dist/
+static/dist/bundle.js
 junit.xml
+**/dist/*.js
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

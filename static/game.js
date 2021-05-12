@@ -1,5 +1,5 @@
-const zero = require('./zero')
-const Board = require('./board.js')
+const zero = require("./zero");
+const Board = require("./board.js");
 
 const BOARD_WIDTH = 15;
 
@@ -159,4 +159,3 @@ function addOneTo(time) {
 }
 
 module.exports = Game;
-

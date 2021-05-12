@@ -1,19 +1,21 @@
-name: run-my-tests
+name: Run-Tests-Action
 on: [push]
 jobs:
-  run-my-tests:
+  Run-Tests:
+    name: Build-and-Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
       - run: pip install django
       - run: npm ci
-      - run: make all & sleep 10 && npm test
-      - name: Test Report
+      - run: make test
+      
+      - name: Test-Report
         uses: dorny/test-reporter@v1
         if: success() || failure() # run this step even if previous step failed
         with:
-          name: JEST Tests # Name of the check run which will be created
+          name: Game-Tests-Report # Name of the check run which will be created
           path: reports/j*.xml # Path to test results
           reporter: jest-junit # Format of test results
 

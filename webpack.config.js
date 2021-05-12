@@ -10,7 +10,11 @@ module.exports = {
   },
 
   output: {
-    path: path.resolve(__dirname, "./static/dist"), // Should be in STATICFILES_DIRS
+    path: path.resolve(
+      // eslint-disable-next-line no-undef
+      __dirname,
+      "./static/dist"
+    ), // Should be in STATICFILES_DIRS
     publicPath: "/static/", // Should match Django STATIC_URL
     filename: "[name].js", // No filename hashing, Django takes care of this
     chunkFilename: "[id]-[chunkhash].js", // DO have Webpack hash chunk filename, see below
