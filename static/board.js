@@ -32,6 +32,7 @@ class Board {
 
   createChildSquareAddToSquares(index) {
     let div = document.createElement("div");
+    div.id = index;
     this.parent.appendChild(div);
     const borders = [];
     if (index >= this.twoBottomRows()) {

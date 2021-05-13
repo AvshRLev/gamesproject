@@ -12,10 +12,18 @@ function level(level, levelName) {
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#game").style.display = "none";
   document.querySelector("#level-select").style.display = "block";
+  document.querySelector(".btest").style.display = "none";
+  document.addEventListener("keypress", (e) => {
+    if (e.key === "T") {
+      document.querySelector(".btest").style.display = "block";
+    }
+  });
   let level1Button = document.querySelector("#level1");
   let level2Button = document.querySelector("#level2");
   let level3Button = document.querySelector("#level3");
   let level4Button = document.querySelector("#level4");
+  let levelTestButton = document.querySelector("#level-test");
+  let levelTest = { 187: 1 };
   let level1 = {
     0: 1,
     1: 1,
@@ -166,5 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   level4Button.addEventListener("click", () => {
     level(level4, "Level 4");
+  });
+  levelTestButton.addEventListener("click", () => {
+    level(levelTest, "Level Test");
   });
 });
