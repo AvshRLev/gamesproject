@@ -1,5 +1,5 @@
 function zero() {
-    return 0;
-  }
+  return 0;
+}
 
-module.exports = zero
+module.exports = zero;

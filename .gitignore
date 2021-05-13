@@ -117,7 +117,9 @@ out
 
 project/__pycache__/
 static/dist/
+static/dist/bundle.js
 junit.xml
+**/dist/*.js
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -228,3 +230,6 @@ venv.bak/
 pycache  
 __pycache__
 __pycache__/
+project/pycache/
+static/dist/
+junit.xml
