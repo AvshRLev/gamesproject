@@ -120,6 +120,8 @@ static/dist/
 static/dist/bundle.js
 junit.xml
 **/dist/*.js
+bundle.js
+./static/dist/bundle.js
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,36 +1,34 @@
-{% extends "games/layout.html" %}
-{% load static %}
-
-{% block body %} 
-    <div id="game">
-        <div class="top">
-            <button class="btn btn-sm button" id="start">Start/Pause</button>
-            <h3>Score: <span id="score">0000</span> </h3>
-            <h3>Time: <span id="time">00</span></h3>
-            <button class="btn btn-sm button" id="restart">Restart</button>
-        </div>
-        <div class="grid">
-            
-        </div>
+{% extends "games/layout.html" %} {% load static %} {% block body %}
+<div id="game">
+  <div class="top">
+    <button class="btn btn-sm button" id="start">Start/Pause</button>
+    <h3>Score: <span id="score">0000</span></h3>
+    <h3>Time: <span id="time">00</span></h3>
+    <button class="btn btn-sm button" id="restart">Restart</button>
+  </div>
+  <div class="grid"></div>
+</div>
+<div id="level-select">
+  <div class="level-selection">
+    <div class="b1">
+      <button class="button btn" id="level1">Level 1</button>
     </div>
-    <div id="level-select">
-        <div class="level-selection" >
-            <div class="b1">
-            <button class="button btn" id="level1">Level 1</button>
-            </div>
-            <div class="b2">
-                <button class="button btn" id="level2">Level 2</button>
-            </div>
-            <div class="b3">
-                <button class="button btn" id="level3">Level 3</button>
-            </div>
-            <div class="b4">
-                <button class="button btn" id="level4">Level 4</button>
-            </div>        
-        </div>
+    <div class="b2">
+      <button class="button btn" id="level2">Level 2</button>
     </div>
-{% endblock %}
-
-{% block script %}
-    <script type="module" src="{% static 'bundle.js' %}"></script>
+    <div class="b3">
+      <button class="button btn" id="level3">Level 3</button>
+    </div>
+    <div class="b4">
+      <button class="button btn" id="level4">Level 4</button>
+    </div>
+    <div>
+      <div class="btest">
+        <button class="button btn" id="level-test">Level Test</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block script %}
+<script type="module" src="{% static 'bundle.js' %}"></script>
 {% endblock %}
