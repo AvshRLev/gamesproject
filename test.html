@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Games</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link href="games/static/games/style.css" rel="stylesheet" />
+
+    <script type="module" src="static/dist/bundle.js"></script>
+  </head>
+  <body>
+    <br />
+
+    <div id="game">
+      <div class="top">
+        <button class="btn btn-sm button" id="start">Start/Pause</button>
+        <h3>Score: <span id="score">0000</span></h3>
+        <h3>Time: <span id="time">00</span></h3>
+        <button class="btn btn-sm button" id="restart">Restart</button>
+      </div>
+      <div class="grid"></div>
+    </div>
+    <div id="level-select">
+      <div class="level-selection">
+        <div class="b1">
+          <button class="button btn" id="level1">Level 1</button>
+        </div>
+        <div class="b2">
+          <button class="button btn" id="level2">Level 2</button>
+        </div>
+        <div class="b3">
+          <button class="button btn" id="level3">Level 3</button>
+        </div>
+        <div class="b4">
+          <button class="button btn" id="level4">Level 4</button>
+        </div>
+        <div>
+          <div class="btest">
+            <button class="button btn" id="level-test">Level Test</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-fixed">Not signed in.</div>
+    <ul class="nav fixed-bottom">
+      <li class="nav-item">
+        <a class="nav-link green" href="/">index</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link green" href="/login">Log In</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link green" href="/register">Register</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link green" href="/space_invaders">Level Selection</a>
+      </li>
+    </ul>
+    <hr />
+  </body>
+</html>
