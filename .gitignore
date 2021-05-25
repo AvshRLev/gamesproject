@@ -233,5 +233,9 @@ pycache
 __pycache__
 __pycache__/
 project/pycache/
-static/dist/
+/static/dist
 junit.xml
+bundle.js
+/Scripts
+pyvenv.cfg
+settings_local.py

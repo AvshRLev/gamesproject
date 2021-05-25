@@ -10,4 +10,7 @@ lint:
 test:
 	make run & sleep 5 && npm run test
 	
+migrate:
+	python manage.py makemigrations	
+	python manage.py migrate
 
