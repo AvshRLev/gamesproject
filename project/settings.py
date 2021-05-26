@@ -148,6 +148,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
+    '/home/app/webapp/static/dist',
     'C:/Users/User/Documents/Cs50/project/project/',
     'C:/Users/User/Documents/Cs50/project/project/static/dist',
     '/home/runner/work/gamesproject/gamesproject',
