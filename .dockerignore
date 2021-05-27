@@ -1,0 +1,15 @@
+/__test__
+/.github
+/env
+/include
+/lib
+/node_modules
+.dockerignore
+.env
+.gitignore
+db.sqlite3
+Dockerfile
+Makefile
+README.md
+jest.config.js
+.eslintrc.json
