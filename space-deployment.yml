@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: space-invaders
+  labels:
+    app: space-invaders
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: space-invaders
+  template:
+    metadata:
+      labels:
+        app: space-invaders
+    spec:
+      containers:
+        - name: space-invaders
+          image: avshidocker/space_invaders:latest
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: space-invaders-service
+spec:
+  selector:
+    app: space-invaders
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30000
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: inner-service
+# spec:
+#   selector:
+#     app: space-invaders
+#   ports:
+#     - protocol: TCP
+#       port: 8000
+#       targetPort: 8000
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: space-configmap
+# data:
+#   database_url: inner-service
