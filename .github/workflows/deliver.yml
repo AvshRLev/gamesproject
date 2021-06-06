@@ -10,23 +10,13 @@ jobs:
     name: deploy to cluster
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: deploy to cluster
-        uses: steebchen/kubectl@master
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      - uses: danielr1996/kubectl-action@1.0.0
+        name: Deploy
         with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
           args: set image --record deployment/space-invaders space-invaders=avshidocker/space_invaders:latest
-      - name: update cluster
-        uses: steebchen/kubectl@master
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      - uses: danielr1996/kubectl-action@1.0.0
+        name: Update
         with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
           args: set image --record deployment/space-invaders space-invaders=avshidocker/space_invaders
-      - name: verify deployment
-        uses: steebchen/kubectl@master
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-          KUBECTL_VERSION: "1.19"
-        with:
-          args: '"rollout status deployment/my-app"'
