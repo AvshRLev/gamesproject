@@ -163,7 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
     54: 1,
   };
   level1Button.addEventListener("click", () => {
-    console.log("level1 clicked");
     level(level1, "Level 1");
   });
   level2Button.addEventListener("click", () => {
