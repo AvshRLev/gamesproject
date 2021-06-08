@@ -11,7 +11,7 @@
    mkdir -p $HOME/.kube
    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
    sudo chown $(id -u):$(id -g) $HOME/.kube/config
-6. kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+6. kubectl apply -f [kubeflannel](https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml)
 7. On the Worker servers only, join them to the cluster using the command you copied earlier.
    kubeadm join 172.31.37.80:6443 --token ... --discovery-token-ca-cert-hash ...
 8. kubectl apply -f space-deployment.yml and space-ingress.yml
