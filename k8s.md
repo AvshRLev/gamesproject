@@ -1,3 +1,5 @@
+# How I deployed a kubernetes cluster on aws
+
 1. launch 3 ec2 instances
 2. install docker and k8s on all of them
 3. On each server, enable the use of iptables
