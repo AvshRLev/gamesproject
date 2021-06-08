@@ -22,4 +22,4 @@ jobs:
           instance-ids: ${{ secrets.INSTANCE_ID }}
 
           working-directory: /home/ubuntu/
-          command: .var/scripts/redeploy.sh
+          command: ./var/scripts/redeploy.sh
