@@ -2,30 +2,33 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>{% block title %}Games{% endblock %}</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link href="{% static 'games/style.css' %}" rel="stylesheet">
-        {% block script %}
-        {% endblock %}
-    </head>
-    <body>
-        <br>
-        {% block body %}
-        {% endblock %}
-        <div class="position-fixed">
+  <head>
+    <title>{% block title %}Games{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link href="{% static 'games/style.css' %}" rel="stylesheet" />
+    {% block script %} {% endblock %}
+  </head>
+  <body>
+    <br />
+    {% block body %} {% endblock %}
+    <!-- <div class="position-fixed">
             {% if user.is_authenticated %}
                 Signed in as <strong>{{ user.username }}</strong>.
             {% else %}
                 Not signed in.
             {% endif %}
-        </div>
-        <ul class="nav fixed-bottom">
-            <li class="nav-item">
-                <a class="nav-link green" href="{% url 'index' %}">index</a>
-            </li>
-            {% if user.is_authenticated %}
-                <li>
+        </div> -->
+    <ul class="nav fixed-bottom">
+      <li class="nav-item">
+        <a class="nav-link green" href="{% url 'space-invaders' %}">Level Selection</a>
+      </li>
+      <!-- {% if user.is_authenticated %} -->
+      <!-- <li>
                     <a class="nav-link green" href="{% url 'logout' %}">Log Out</a>
                 </li>
                 {% else %}
@@ -34,12 +37,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link green" href="{% url 'register' %}">Register</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link green" href="{% url 'space_invaders' %}">Level Selection</a>
-                </li>
-            {% endif %}
-        </ul>
-        <hr>
-    </body>
+                </li>-->
+      <li class="nav-item">
+        <a class="nav-link green" href="{% url 'space-invaders' %}">Level Selection</a>        
+      </li>
+      <!-- {% endif %} -->
+    </ul>
+    <hr />
+  </body>
 </html>
