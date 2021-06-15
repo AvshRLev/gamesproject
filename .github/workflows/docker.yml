@@ -1,6 +1,11 @@
 name: Dockerize
 
 on:
+  workflow_run:
+    workflows: ["Front End Tests", "Lint Code Base Action"]
+    branches: [main]
+    types:
+      - completed
   push:
     branches:
       - "master"
