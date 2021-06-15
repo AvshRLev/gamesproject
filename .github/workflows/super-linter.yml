@@ -10,7 +10,7 @@ name: Lint Code Base Action
 #############################
 on:
   push:
-    branches-ignore: [master, main]
+    # branches-ignore: [master, main]
     # Remove the line above to run when pushing to master
 
 ###############
