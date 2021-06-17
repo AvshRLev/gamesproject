@@ -37,11 +37,11 @@ It is not mobile friendly yet so make sure to visit from a desktop or a laptop.
 
 ## Project Architecture
 
-Overview
+Overview:
 
 ![Project Architecture](/docs/Architecture.png)
 
-Detailed
+Detailed:
 
 ![Detailed Architecture](/docs/detailed-arch.png)
 
@@ -51,7 +51,9 @@ Detailed
 
 ### How I Deployed Kubernetes On AWS
 
-I used kubeadm to install kubernetes on 3 EC2 Instances a master and 2 workers. to a more in depth explanation and step by step guide you can follow [This Link](/docs/k8s.md)
+I used kubeadm to install kubernetes on 3 EC2 Instances a master and 2 workers.
+
+For a more in depth explanation and step by step guide you can follow [This Link](/docs/k8s.md)
 
 ## Deployment Pipeline
 
