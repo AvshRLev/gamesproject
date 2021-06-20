@@ -294,7 +294,7 @@ Below are some screenshots from the test report i get after every time the testi
 
 ## General Workflow
 
-I have had the joy and luck to find an amazing mentor who is also an old time friend... He has been training me and teaching me throughout this project.
+I have had the joy and luck to find an amazing mentor who is also an old time friend.. He has been training me and teaching me throughout this project.
 We have been working in the Kanban method with a [trello board](https://trello.com/b/OX4xBjob/space-invadors)
 
 ![Trello](/docs/trello.png)
