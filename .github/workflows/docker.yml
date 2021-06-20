@@ -2,7 +2,7 @@ name: Dockerize
 
 on:
   workflow_run:
-    workflows: ["Front End Tests", "Lint Code Base Action"]
+    workflows: ["Front End Tests"]
     branches: [main]
     types:
       - completed
