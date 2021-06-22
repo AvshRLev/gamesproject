@@ -28,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '18.198.65.88', '3.65.67.126', '18.195.151.153']
+ALLOWED_HOSTS = ['localhost', 'avshi.net', 'space-invaders.avshi.net']
 
 
 # Application definition
