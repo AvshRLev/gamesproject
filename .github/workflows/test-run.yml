@@ -11,7 +11,7 @@ jobs:
       - run: npm ci
       - run: make test
         env:
-          SECRET_KEY: { { secrets.SECRET_KEY } }
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
       - name: Test-Report
         uses: dorny/test-reporter@v1
         if: success() || failure() # run this step even if previous step failed
