@@ -22,4 +22,4 @@ jobs:
           instance-ids: ${{ secrets.INSTANCE_ID }}
 
           working-directory: /home/ubuntu/
-          command: sleep 60 && ./var/scripts/redeploy.sh
+          command: sleep 180 && ./var/scripts/redeploy.sh
