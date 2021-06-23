@@ -1,7 +1,7 @@
-name: Deliver
+name: ReDeliver
 on:
   workflow_run:
-    workflows: ["Dockerize"]
+    workflows: ["Deliver"]
     branches: [main]
     types:
       - completed
