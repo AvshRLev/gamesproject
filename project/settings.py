@@ -33,7 +33,7 @@ DEBUG = True
 if os.environ.get('GITHUB_WORKFLOW'):
     DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'avshi.net', 'space-invaders.avshi.net']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'avshi.net', 'space-invaders.avshi.net']
 
 
 # Application definition
