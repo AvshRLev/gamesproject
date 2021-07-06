@@ -239,3 +239,5 @@ bundle.js
 /Scripts
 pyvenv.cfg
 settings_local.py
+
+**/migrations/*.py
