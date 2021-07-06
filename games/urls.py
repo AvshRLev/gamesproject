@@ -1,5 +1,5 @@
 from django.urls import path
-from.views import GameAPI, GetUserGames
+from.views import GetHighScores, PostGame, GetUserGameStats
 
 from . import views
 
@@ -12,6 +12,7 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("space_invaders", views.space_invaders, name="space_invaders"),
 
-    path("api/user/<str:username>/game", GameAPI.as_view()),
-    path("api/user/<int:id>/games", GetUserGames.as_view()),
+    path("api/user/<str:username>/game", PostGame.as_view()),
+    path("api/user/<int:id>/gamestats", GetUserGameStats.as_view()),
+    path("api/highscores", GetHighScores.as_view()),
     ]

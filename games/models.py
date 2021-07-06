@@ -14,3 +14,4 @@ class Game(models.Model):
     time = models.IntegerField()
     shots = models.IntegerField()
     won = models.BooleanField()
+    elaborate_score = models.IntegerField()
