@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = 'wd@!psmnvh1^kb4fi#-=o0)-rbuq@(ay2zp#0&z@769i3qsd#u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -33,7 +33,7 @@ DEBUG = True
 if os.environ.get('GITHUB_WORKFLOW'):
     DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'avshi.net', 'space-invaders.avshi.net']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'avshi.net', 'space-invaders.avshi.net', '*']
 
 
 # Application definition
@@ -90,13 +90,13 @@ DB_PORT = os.getenv('DB_PORT')
 
 
 DATABASES = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
+        'NAME': os.environ.get('POSTGRES_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
